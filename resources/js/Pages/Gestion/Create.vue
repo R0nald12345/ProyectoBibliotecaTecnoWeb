@@ -1,0 +1,26 @@
+<template>
+  <div>
+    <h1 class="text-2xl font-bold mb-4">Crear Gestión</h1>
+    <form @submit.prevent="submit">
+      <div class="mb-4">
+        <label class="block mb-1">Nombre</label>
+        <input v-model="form.nombre" type="text" class="border rounded px-3 py-2 w-full" />
+        <div v-if="form.errors.nombre" class="text-red-500">{{ form.errors.nombre }}</div>
+      </div>
+
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Guardar</button>
+    </form>
+  </div>
+</template>
+
+<script setup>
+import { useForm } from '@inertiajs/vue3'
+
+const form = useForm({
+  nombre: ''
+})
+
+function submit() {
+  form.post('/gestion')
+}
+</script>

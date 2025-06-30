@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asistencias', function (Blueprint $table) {
+        Schema::create('gestion', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('estudiante_id')->constrained();
-            $table->date('fecha');
-            $table->time('hora');
-            $table->integer('estado')->default(0); // 0 = no verificado, 1 = verificado
+            $table->string('nombre');
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('asistencias');
+         Schema::dropIfExists('gestion');
     }
 };

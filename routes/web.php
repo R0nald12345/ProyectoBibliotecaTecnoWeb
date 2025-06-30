@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\AsistenciaController;
+
+
+use App\Http\Controllers\GestionController;
+
 use App\Http\Controllers\HolaMundoController;
 use App\Http\Controllers\ScraperController;
 use App\Http\Controllers\UsuarioController;
@@ -21,11 +25,14 @@ Route::get('/', function () {
     ]);
 });
 
+Route::resource('gestion', GestionController::class);
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-])->group(function () { 
+])->group(function () {
+
 
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
