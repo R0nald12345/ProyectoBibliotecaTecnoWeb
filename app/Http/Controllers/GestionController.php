@@ -49,6 +49,7 @@ class GestionController extends Controller
     public function destroy(Gestion $gestion)
     {
         $gestion->delete();
-        return redirect()->route('gestion.index')->with('success', 'Gestión eliminada.');
+
+        return redirect()->route('gestion.index')->with('success', 'Gestión eliminada con éxito');
     }
 }
