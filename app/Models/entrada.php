@@ -16,7 +16,7 @@ class entrada extends Model
         'user_id',
         'tipoalerta_id',
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -24,6 +24,6 @@ class entrada extends Model
 
     public function tipoalerta()
     {
-        return $this->belongsTo(TipoAlerta::class);
+        return $this->belongsTo(tipoalerta::class);
     }
 }
