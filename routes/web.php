@@ -10,6 +10,7 @@ use App\Http\Controllers\ScraperController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisoController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +27,7 @@ Route::get('/', function () {
 });
 
 Route::resource('gestion', GestionController::class);
-
+Route::resource('roles', RoleController::class);
 
 
 

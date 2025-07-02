@@ -14,6 +14,7 @@ class GestionController extends Controller
         return Inertia::render('Gestion/Index', ['gestiones' => $gestiones]);
     }
 
+
     public function create()
     {
         return Inertia::render('Gestion/Create');

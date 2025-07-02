@@ -8,14 +8,11 @@ class Rol extends Model
 {
     protected $table = 'roles';
     protected $fillable = ['nombre'];
-    
+
     public function usuarios()
     {
         return $this->hasMany(Usuario::class);
     }
-    
-    public function permisos()
-    {
-        return $this->belongsToMany(Permiso::class, 'role_permisos');
-    }
+
+
 }

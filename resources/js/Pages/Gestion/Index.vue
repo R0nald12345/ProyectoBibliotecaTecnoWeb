@@ -22,6 +22,7 @@ function deleteGestion(id) {
 <template>
   <div>
     <h1 class="text-2xl font-bold mb-4">Gestiones</h1>
+
     <div
       v-if="message"
       class="mb-4 p-3 rounded bg-green-100 text-green-800 border border-green-300"
