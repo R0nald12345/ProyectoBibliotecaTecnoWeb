@@ -27,6 +27,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/entrada/create', [EntradaController::class, 'create'])->name('entrada.create');
+Route::get('/entrada', [EntradaController::class, 'index'])->name('entrada.index');
+Route::delete('/entrada/{id}', [EntradaController::class, 'destroy'])->name('entrada.destroy');
+
 
 Route::post('/entrada', [EntradaController::class, 'store'])->name('entrada.store');
 Route::post('/salida', [SalidaController::class, 'store'])->name('salida.store');

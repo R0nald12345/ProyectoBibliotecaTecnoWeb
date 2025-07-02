@@ -4,16 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\entrada;
 use App\Models\tipoalerta;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class EntradaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        //
+        $entradas = entrada::with(['user', 'tipoalerta'])->latest()->paginate(10);
+
+        return Inertia::render('Entrada/Index', [
+            'entradas' => $entradas
+        ]);
     }
 
     /**
@@ -21,7 +29,18 @@ class EntradaController extends Controller
      */
     public function create()
     {
-        //
+        $usuarios = User::select('id', 'name')->get();
+        $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
+
+        $fecha = now()->format('Y-m-d');
+        $hora = now()->format('H:i');
+
+        return Inertia::render('Entrada/Create', [
+            'usuarios' => $usuarios,
+            'tipos_alerta' => $tiposAlerta,
+            'fecha_actual' => $fecha,
+            'hora_actual' => $hora,
+        ]);
     }
 
     /**
@@ -34,25 +53,14 @@ class EntradaController extends Controller
             'fecha' => 'required|date',
             'hora' => 'required',
             'user_id' => 'required|exists:users,id',
-            'tipoalerta' => 'required|string|max:255', // Nuevo campo
+            'tipoalerta_id' => 'required|exists:tipoalerta,id',
         ]);
 
-        // Crear tipo de alerta
-        $tipoAlerta = tipoalerta::create([
-            'descripcion' => $data['tipoalerta'],
-        ]);
+        Entrada::create($data);
 
-        // Crear entrada con el nuevo tipo de alerta
-        Entrada::create([
-            'descripcion'     => $data['descripcion'],
-            'fecha'           => $data['fecha'],
-            'hora'            => $data['hora'],
-            'user_id'         => $data['user_id'],
-            'tipoalerta_id'   => $tipoAlerta->id,
-        ]);
-
-        return redirect()->route('entrada.index')->with('success', 'Entrada creada correctamente con nuevo tipo de alerta.');
+        return redirect()->route('entrada.index')->with('success', 'Entrada creada correctamente.');
     }
+
 
     /**
      * Display the specified resource.
@@ -81,8 +89,13 @@ class EntradaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(entrada $entrada)
+
+
+    public function destroy($id)
     {
-        //
+        $entrada = Entrada::findOrFail($id);
+        $entrada->delete();
+
+        return redirect()->route('entrada.index')->with('success', 'Entrada eliminada correctamente.');
     }
 }
