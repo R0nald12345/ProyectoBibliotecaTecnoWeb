@@ -303,13 +303,12 @@ const extraerDatosEstudiante = async (url) => {
   try {
     cargandoDatos.value = true;
 
-    const response = await fetch(`/scrap-estudiante?url=${url}`, {
+    const response = await fetch(`/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/scrap-estudiante?url=${encodeURIComponent(url)}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       }
     });
-
 
     if (!response.ok) {
       throw new Error('Error al hacer scraping en el servidor');
@@ -317,24 +316,26 @@ const extraerDatosEstudiante = async (url) => {
 
     const data = await response.json();
     estudianteData.value = data;
-     const esValido = data && Object.keys(data).length > 0 && !data.error;
+
+    const esValido = data && Object.keys(data).length > 0 && !data.error;
 
     estudianteData.value = esValido ? data : {};
 
-    mensaje.value = esValido
-      ? 'Datos del estudiante extraídos correctamente'
-      : 'Documento no válido';
-    mensajeEstilo.value = esValido
-      ? 'bg-green-100 text-green-800'
-      : 'bg-red-100 text-red-800';
-    console.log(data)
+    if (!esValido) {
+      mensaje.value = 'Documento no válido';
+      mensajeEstilo.value = 'bg-red-100 text-red-800';
+      return; // Salir temprano si no es válido
+    }
+
+    console.log(data);
+
     // Registrar entrada automáticamente
     const entradaData = {
-      descripcion: esValido ? 'Estudiante aceptado' : 'Estudiante rechazado',
+      descripcion: 'Estudiante aceptado',
       fecha: new Date().toISOString().split('T')[0],
       hora: new Date().toTimeString().split(' ')[0],
-      user_id: data.REGISTRO, // debes pasar este ID desde tu lógica (ej: usuario escaneado)
-      tipoalerta_id: esValido ? 2 : 3,
+      user_id: parseInt(data.REGISTRO),
+      tipoalerta_id: 1,
     };
 
     // Hacer POST a través de Inertia
@@ -342,13 +343,22 @@ const extraerDatosEstudiante = async (url) => {
       preserveScroll: true,
       onSuccess: () => {
         console.log('Entrada registrada automáticamente.');
+        // ✅ Mensaje de éxito solo cuando todo sale bien
+        mensaje.value = 'Datos del estudiante extraídos correctamente';
+        mensajeEstilo.value = 'bg-green-100 text-green-800';
       },
       onError: (errors) => {
         console.error('Error al registrar entrada:', errors);
+        // ✅ Mensaje de error personalizado cuando falla la entrada
+        mensaje.value = `Error: usuario ${data.NOMBRE || 'desconocido'} no tiene una cuenta, hablar con el administrador`;
+        mensajeEstilo.value = 'bg-red-100 text-red-800';
       },
     });
-    mensaje.value = 'Datos del estudiante extraídos';
-    mensajeEstilo.value = 'bg-green-100 text-green-800';
+
+    // ❌ REMOVIDO: Estas líneas que sobrescribían el mensaje
+    // mensaje.value = 'Datos del estudiante extraídos';
+    // mensajeEstilo.value = 'bg-green-100 text-green-800';
+
   } catch (error) {
     console.error('Error al extraer datos:', error);
     mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`;

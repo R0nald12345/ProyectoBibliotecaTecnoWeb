@@ -6,27 +6,18 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 
 const showingNavigationDropdown = ref(false);
-const theme = ref('theme-kids'); // Tema por defecto
+const theme = ref('theme-kids');
 
 function setTheme(newTheme) {
-  theme.value = newTheme;
-  document.documentElement.className = newTheme; // Cambia la clase del <html>
+    theme.value = newTheme;
+    document.documentElement.className = newTheme;
 }
 
-// Cambia el tema automáticamente según la hora (opcional)
 onMounted(() => {
-  const hour = new Date().getHours();
-  if (hour >= 19 || hour < 7) setTheme('theme-night');
-  else setTheme('theme-young');
+    const hour = new Date().getHours();
+    if (hour >= 19 || hour < 7) setTheme('theme-night');
+    else setTheme('theme-young');
 });
-
-const switchToTeam = (team) => {
-    router.put(route('current-team.update'), {
-        team_id: team.id,
-    }, {
-        preserveState: false,
-    });
-};
 
 const logout = () => {
     router.post(route('logout'));
@@ -38,71 +29,87 @@ const logout = () => {
 
         <Head :title="title" />
 
-        <div class="min-h-screen flex bg-gray-100">
+        <div class="min-h-screen flex bg-gradient-to-br from-indigo-100 via-white to-orange-100">
             <!-- Sidebar -->
-            <aside class="w-64 bg-[#1f2937] text-white p-4 hidden md:block min-h-screen">
-                <div class="mb-6">
+            <aside
+                class="w-64 bg-gradient-to-b from-indigo-900 to-indigo-700 text-white p-6 hidden md:flex flex-col shadow-xl min-h-screen">
+                <div class="mb-8 flex items-center gap-2">
                     <Link :href="route('dashboard')">
                     <ApplicationMark class="h-10 w-auto" />
                     </Link>
+                    <span class="font-bold text-lg tracking-wide">Biblioteca</span>
                 </div>
+                <nav class="flex-1 space-y-2">
+                    <Link :href="route('dashboard')"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
+                        :class="{ 'bg-indigo-800 font-semibold': route().current('dashboard') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Dashboard
+                    </Link>
+                    <Link :href="route('gestion.index')"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
+                        :class="{ 'bg-indigo-800 font-semibold': route().current('gestion.*') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Gestiones
+                    </Link>
 
-                <nav class="space-y-2 text-sm">
-                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] from-violet-100/[0.12] to-violet-100/[0.04]"
-                        :class="{ 'from-violet-100/[0.24]': route().current('dashboard') }">
-                        <Link :href="route('dashboard')"
-                            class="flex items-center text-gray-100 transition hover:text-orange-400"
-                            :class="{ 'text-orange-400': route().current('dashboard') }">
-                        <svg class="shrink-0 fill-current" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 24 24">
-                            <path d="M3 12l9-9 9 9-1.5 1.5L12 5.5 4.5 13.5z" />
-                        </svg>
-                        <span class="ml-4">Dashboard</span>
-                        </Link>
-                    </li>
+                    <Link :href="route('usuarios.index')"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
+                        :class="{ 'bg-indigo-800 font-semibold': route().current('usuarios.*') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Usuarios
+                    </Link>
+                    <Link :href="route('asistencia.index')"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
+                        :class="{ 'bg-indigo-800 font-semibold': route().current('usuarios.*') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Asistencia
+                    </Link>
 
-                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] from-violet-100/[0.12] to-violet-100/[0.04]"
-                        :class="{ 'from-violet-100/[0.24]': route().current('gestion.*') }">
-                        <Link href="/gestion" class="flex items-center text-gray-100 transition hover:text-orange-400"
-                            :class="{ 'text-orange-400': route().current('gestion.*') }">
-                        <svg class="shrink-0 fill-current" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 24 24">
-                            <path d="M4 4h16v2H4zm0 6h16v2H4zm0 6h16v2H4z" />
-                        </svg>
-                        <span class="ml-4">Gestiones</span>
-                        </Link>
-                    </li>
 
-                    <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] from-violet-100/[0.12] to-violet-100/[0.04]"
-                        :class="{ 'from-violet-100/[0.24]': route().current('usuarios.*') }">
-                        <Link href="/usuarios" class="flex items-center text-gray-100 transition hover:text-orange-400"
-                            :class="{ 'text-orange-400': route().current('usuarios.*') }">
-                        <svg class="shrink-0 fill-current" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
-                        </svg>
-                        <span class="ml-4">Usuarios</span>
-                        </Link>
-                    </li>
                 </nav>
+                <div class="mt-auto pt-6 border-t border-indigo-800">
+                    <span class="text-xs text-indigo-200">© 2024 Biblioteca</span>
+                </div>
             </aside>
-
 
             <!-- Main content -->
             <div class="flex-1 flex flex-col">
                 <!-- Top nav -->
-                <nav class="bg-white border-b border-gray-100 px-4 py-2 flex items-center justify-between">
+                <nav
+                    class="bg-white/80 backdrop-blur border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
                     <div class="block md:hidden">
-                        <button class="text-gray-500" @click="showingNavigationDropdown = !showingNavigationDropdown">
-                            ☰
+                        <button class="text-indigo-700 text-2xl"
+                            @click="showingNavigationDropdown = !showingNavigationDropdown">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
                         </button>
                     </div>
                     <div class="flex items-center gap-4">
-                        <span class="text-sm text-gray-700">{{ $page.props.auth.user.name }}</span>
+                        <span class="text-sx text-gray-700 font-medium">{{ $page.props.auth.user.name }}</span>
                         <Dropdown align="right" width="48">
                             <template #trigger>
-                                <button class="text-gray-500 hover:text-gray-700">Opciones</button>
+                                <button
+                                    class="flex items-center gap-2 px-3 py-1 rounded hover:bg-indigo-100 transition text-indigo-700">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                    </svg>
+                                    Perfil
+                                </button>
                             </template>
                             <template #content>
                                 <DropdownLink :href="route('profile.show')">Perfil</DropdownLink>
@@ -115,7 +122,7 @@ const logout = () => {
                 </nav>
 
                 <!-- Page content -->
-                <main class="flex-1 p-6">
+                <main class="flex-1 p-8 bg-white/70">
                     <slot />
                 </main>
             </div>
