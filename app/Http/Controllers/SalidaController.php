@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\EntradasExport;
 use App\Exports\SalidasExport;
 use App\Models\salida;
-use App\Models\TipoAlerta;
+use App\Models\tipoalerta;
 use App\Models\User;
 use App\Models\Gestion;
 use Illuminate\Http\Request;
@@ -35,7 +35,7 @@ class SalidaController extends Controller
     public function create()
     {
         $usuarios = User::select('id', 'name')->get();
-        $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
+        $tiposAlerta = tipoalerta::select('id', 'descripcion')->get();
         $gestiones = Gestion::select('id', 'nombre')->get();
 
         $fecha = now()->format('Y-m-d');
