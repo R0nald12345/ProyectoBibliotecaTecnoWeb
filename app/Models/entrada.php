@@ -32,4 +32,5 @@ class entrada extends Model
     {
         return $this->belongsTo(Gestion::class);
     }
+
 }

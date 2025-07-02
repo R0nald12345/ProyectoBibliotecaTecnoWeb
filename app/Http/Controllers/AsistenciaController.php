@@ -15,6 +15,11 @@ class AsistenciaController extends Controller
         return Inertia::render('Asistencia/Scan');
     }
 
+    public function index2()
+    {
+        return Inertia::render('Asistencia/Scan2');
+    }
+
     public function registrar(Request $request)
     {
         $estudiante = Estudiante::where('codigo', $request->codigo)->first();

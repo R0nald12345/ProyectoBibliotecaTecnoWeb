@@ -14,15 +14,19 @@ class DashboardController extends Controller
 {
     public function graficoEntradasPorGestion()
     {
-        $datos = \App\Models\Gestion::withCount('entradas')->get()->map(function ($g) {
-            return [
-                'gestion' => $g->nombre,
-                'total' => $g->entradas_count,
-            ];
-        });
+        $entradasPorGestion = \App\Models\Entrada::selectRaw('gestion_id, COUNT(*) as total')
+            ->groupBy('gestion_id')
+            ->with('gestion') // Asegúrate de tener la relación definida
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'gestion' => $item->gestion->nombre ?? 'Sin nombre',
+                    'total' => $item->total
+                ];
+            });
 
-        return Inertia::render('Dashboard', [ // Asegúrate que sea 'Dashboard' con D mayúscula
-            'entradasPorGestion' => $datos
+        return Inertia::render('Dashboard', [
+            'entradasPorGestion' => $entradasPorGestion
         ]);
     }
 }

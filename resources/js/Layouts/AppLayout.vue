@@ -85,6 +85,16 @@ const hasRole = (roleName) => {
                     </svg>
                     Asistencia
                     </Link>
+                      <Link :href="route('asistencia.index2')"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
+                        :class="{ 'bg-indigo-800 font-semibold': route().current('usuarios.*') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Asistencia Salida
+                    </Link>
                     <Link v-if="hasRole('admin')" :href="route('roles.index')"
                         class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
                         :class="{ 'bg-indigo-800 font-semibold': route().current('roles.*') }">

@@ -68,6 +68,7 @@ Route::middleware([
     Route::get('/hola', [HolaMundoController::class, 'index'])->name('hola');
 
     Route::get('/asistencia', [AsistenciaController::class, 'index'])->name('asistencia.index');
+    Route::get('/asistencia2', [AsistenciaController::class, 'index2'])->name('asistencia.index2');
     Route::post('/asistencia', [AsistenciaController::class, 'registrar'])->name('asistencia.registrar');
     Route::get('/scrap-estudiante', [ScraperController::class, 'scrape'])->name('scraper.scrape');
 

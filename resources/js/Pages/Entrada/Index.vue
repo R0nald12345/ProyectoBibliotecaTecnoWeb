@@ -1,10 +1,26 @@
 <script setup>
+import Chart from 'chart.js/auto'
 import { Link, usePage, router } from '@inertiajs/vue3'
 import { computed, ref, onMounted, watch } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
 
+const canvasRef = ref(null)
+
+const datosGrafico = computed(() => {
+    const conteo = {}
+
+    for (const entrada of props.entradas.data) {
+        const nombre = entrada.gestion?.nombre || 'Sin gestión'
+        conteo[nombre] = (conteo[nombre] || 0) + 1
+    }
+
+    return {
+        labels: Object.keys(conteo),
+        data: Object.values(conteo)
+    }
+})
 const props = defineProps({
     entradas: Object
 })
@@ -39,6 +55,35 @@ function limpiarFiltro() {
 onMounted(() => {
     entradasFiltradasPorFecha.value = props.entradas.data
 })
+onMounted(() => {
+    if (!canvasRef.value) return
+
+    const ctx = canvasRef.value.getContext('2d')
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: datosGrafico.value.labels,
+            datasets: [{
+                label: 'Entradas por Gestión',
+                data: datosGrafico.value.data,
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    })
+})
+
 
 watch(() => props.entradas, (nuevo) => {
     entradasFiltradasPorFecha.value = nuevo.data
@@ -173,5 +218,10 @@ const mostrarPaginacion = computed(() =>
                 </template>
             </div>
         </div>
+        <div class="mt-10 bg-white p-4 rounded shadow w-full h-[400px]">
+    <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
+    <canvas ref="canvasRef" class="w-full h-full"></canvas>
+</div>
+
     </div>
 </template>
