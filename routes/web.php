@@ -27,6 +27,9 @@ Route::get('/', function () {
 
 Route::resource('gestion', GestionController::class);
 
+
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
