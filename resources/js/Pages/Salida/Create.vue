@@ -22,7 +22,7 @@ const form = useForm({
 })
 
 function submit() {
-  form.post(route('salida.store'), {
+  form.post(route('salidas.store'), {
     preserveScroll: true,
   })
 }
