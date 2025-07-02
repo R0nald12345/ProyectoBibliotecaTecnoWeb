@@ -29,8 +29,8 @@
       <div class="space-y-6">
         <!-- Control de Cámara -->
         <div class="text-center">
-          <button 
-            @click="toggleCamara" 
+          <button
+            @click="toggleCamara"
             class="px-8 py-3 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
             :class="camaraActiva ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-blue-500 to-blue-600'"
           >
@@ -43,16 +43,16 @@
             </span>
           </button>
         </div>
-        
+
         <!-- Vista del Escáner -->
         <div class="bg-white rounded-2xl shadow-xl p-6">
           <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Vista del Escáner</h3>
           <div class="relative mx-auto bg-gray-900 rounded-xl overflow-hidden" style="width: 500px; height: 400px;">
-            <video 
-              id="qr-preview" 
+            <video
+              id="qr-preview"
               class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-xl"
-              style="min-width: 100%; min-height: 100%; object-fit: cover;" 
-              autoplay 
+              style="min-width: 100%; min-height: 100%; object-fit: cover;"
+              autoplay
               muted
             ></video>
             <!-- Marco de Enfoque -->
@@ -75,17 +75,17 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Panel del Carnet -->
       <div v-if="estudianteData" class="flex justify-center items-center">
         <div class="bg-white rounded-2xl shadow-xl p-6">
           <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">Carnet Universitario Digital</h3>
-          
+
           <div
             class="relative w-96 h-64 transition-all duration-700 ease-in-out cursor-pointer"
-            :style="{ 
-              transformStyle: 'preserve-3d', 
-              transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)' 
+            :style="{
+              transformStyle: 'preserve-3d',
+              transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
             }"
             @click="toggleFlip"
           >
@@ -134,18 +134,18 @@
                       <span class="text-red-600 font-bold block text-xs">ESTUDIANTE:</span>
                       <div class="font-bold text-blue-800 text-sm leading-tight">{{ estudianteData.ESTUDIANTE }}</div>
                     </div>
-                    
+
                     <div class="border-l-3 border-blue-600 pl-2">
                       <span class="text-red-600 font-bold block text-xs">CARRERA:</span>
                       <div class="font-semibold text-blue-800 text-xs leading-tight">{{ estudianteData.CARRERA }}</div>
                     </div>
-                    
+
                     <div class="flex space-x-4">
                       <div class="border-l-3 border-blue-600 pl-2 flex-1">
                         <span class="text-red-600 font-bold block text-xs">REGISTRO:</span>
                         <div class="font-bold text-blue-800">{{ estudianteData.REGISTRO }}</div>
                       </div>
-                      
+
                       <div class="border-l-3 border-blue-600 pl-2 flex-1">
                         <span class="text-red-600 font-bold block text-xs">C.I.:</span>
                         <div class="font-bold text-blue-800">{{ estudianteData['DOCUMENTO DE IDENTIDAD'] }}</div>
@@ -181,7 +181,7 @@
                 <div class="bg-black w-24 h-16 rounded mb-4 flex items-center justify-center">
                   <div class="text-white text-xs font-mono">||||||||||</div>
                 </div>
-                
+
                 <!-- Información de Validez -->
                 <div class="text-center text-xs text-blue-800">
                   <div class="font-bold">VÁLIDO HASTA</div>
@@ -246,7 +246,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Instrucción para voltear -->
           <p class="text-center text-sm text-gray-500 mt-4 font-medium">
             <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -309,7 +309,7 @@ const extraerDatosEstudiante = async (url) => {
         'Content-Type': 'application/json',
       }
     });
-  
+
 
     if (!response.ok) {
       throw new Error('Error al hacer scraping en el servidor');
@@ -334,13 +334,13 @@ const iniciarEscaner = async () => {
   try {
     mensaje.value = 'Inicializando cámara con zoom 200%...'
     mensajeEstilo.value = 'bg-blue-100 text-blue-800'
-    
+
     if (!codeReader) {
       codeReader = new BrowserQRCodeReader()
     }
-    
+
     const previewElem = document.getElementById('qr-preview')
-    
+
     // Configurar las restricciones de la cámara con zoom mejorado
     const constraints = {
       video: {
@@ -362,39 +362,39 @@ const iniciarEscaner = async () => {
       (result, err) => {
         if (result) {
           const textoQR = result.getText()
-          
+
           try {
             const url = new URL(textoQR)
             iframeUrl.value = url.href
             mensaje.value = 'QR leído correctamente. Extrayendo datos...'
             mensajeEstilo.value = 'bg-blue-100 text-blue-800'
-            
+
             // Extraer los datos del estudiante a partir de la URL
             extraerDatosEstudiante(url.href)
-            
+
           } catch {
             mensaje.value = 'El contenido del QR no es una URL válida: ' + textoQR
             mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
           }
         }
-        
+
         if (err && !(err instanceof TypeError)) {
           // Ignoramos TypeError que puede ocurrir durante operaciones normales
           console.error('Error de escaneo:', err)
         }
       }
     )
-    
+
     camaraActiva.value = true
-    
+
     // Intentar aplicar configuraciones adicionales de zoom usando MediaStream Track API
     try {
       const stream = previewElem.srcObject
       const videoTrack = stream.getVideoTracks()[0]
-      
+
       if (videoTrack) {
         const capabilities = videoTrack.getCapabilities()
-        
+
         // Si la cámara soporta zoom, intentamos aplicarlo mediante la API de MediaStreamTrack
         if (capabilities.zoom) {
           const zoomValue = Math.min(capabilities.zoom.max, 2.0) // Intentamos un zoom de 2.0 (200%)
@@ -454,7 +454,7 @@ const toggleCamara = () => {
 onMounted(async () => {
   mensaje.value = 'Buscando cámaras disponibles...'
   mensajeEstilo.value = 'bg-blue-100 text-blue-800'
-  
+
   try {
     const devices = await BrowserQRCodeReader.listVideoInputDevices()
     camaras.value = devices
@@ -480,24 +480,10 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   detenerEscaner()
-  
+
   if (autoFlipIntervalId) {
     clearInterval(autoFlipIntervalId)
     autoFlipIntervalId = null
   }
 })
-
 </script>
-
-<style scoped>
-.card-shadow {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-.photo-frame {
-  border: 3px solid #dc2626;
-  background: #f3f4f6;
-}
-.clip-path-trapezoid {
-  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 10% 100%);
-}
-</style>
