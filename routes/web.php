@@ -28,7 +28,6 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', [DashboardController::class, 'graficoEntradasPorGestion'])->name('dashboard');
 
 Route::get('/salidas', [SalidaController::class, 'index'])->name('salida.index');
 Route::get('/salidas/export', [SalidaController::class, 'exportExcel'])->name('salida.export.excel');
