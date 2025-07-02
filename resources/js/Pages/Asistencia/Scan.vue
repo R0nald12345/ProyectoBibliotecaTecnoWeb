@@ -279,7 +279,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { BrowserQRCodeReader } from '@zxing/browser'
-
+import { router } from '@inertiajs/vue3';
 const iframeUrl = ref(null)
 const mensaje = ref(null)
 const mensajeEstilo = ref('bg-blue-100 text-blue-800')
@@ -303,7 +303,7 @@ const extraerDatosEstudiante = async (url) => {
   try {
     cargandoDatos.value = true;
 
-    const response = await fetch(`/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/scrap-estudiante?url=${url}`, {
+    const response = await fetch(`/scrap-estudiante?url=${url}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -317,7 +317,37 @@ const extraerDatosEstudiante = async (url) => {
 
     const data = await response.json();
     estudianteData.value = data;
-    mensaje.value = 'Datos del estudiante extraídos correctamente';
+     const esValido = data && Object.keys(data).length > 0 && !data.error;
+
+    estudianteData.value = esValido ? data : {};
+
+    mensaje.value = esValido
+      ? 'Datos del estudiante extraídos correctamente'
+      : 'Documento no válido';
+    mensajeEstilo.value = esValido
+      ? 'bg-green-100 text-green-800'
+      : 'bg-red-100 text-red-800';
+    console.log(data)
+    // Registrar entrada automáticamente
+    const entradaData = {
+      descripcion: esValido ? 'Estudiante aceptado' : 'Estudiante rechazado',
+      fecha: new Date().toISOString().split('T')[0],
+      hora: new Date().toTimeString().split(' ')[0],
+      user_id: data.REGISTRO, // debes pasar este ID desde tu lógica (ej: usuario escaneado)
+      tipoalerta_id: esValido ? 2 : 3,
+    };
+
+    // Hacer POST a través de Inertia
+    router.post('/entrada', entradaData, {
+      preserveScroll: true,
+      onSuccess: () => {
+        console.log('Entrada registrada automáticamente.');
+      },
+      onError: (errors) => {
+        console.error('Error al registrar entrada:', errors);
+      },
+    });
+    mensaje.value = 'Datos del estudiante extraídos';
     mensajeEstilo.value = 'bg-green-100 text-green-800';
   } catch (error) {
     console.error('Error al extraer datos:', error);

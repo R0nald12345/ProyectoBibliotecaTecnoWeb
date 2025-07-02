@@ -1,11 +1,24 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 
 const showingNavigationDropdown = ref(false);
+const theme = ref('theme-kids'); // Tema por defecto
+
+function setTheme(newTheme) {
+  theme.value = newTheme;
+  document.documentElement.className = newTheme; // Cambia la clase del <html>
+}
+
+// Cambia el tema automáticamente según la hora (opcional)
+onMounted(() => {
+  const hour = new Date().getHours();
+  if (hour >= 19 || hour < 7) setTheme('theme-night');
+  else setTheme('theme-young');
+});
 
 const switchToTeam = (team) => {
     router.put(route('current-team.update'), {

@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-[x-cloak] {
-    display: none;
-}
+:root {
+    --font-size: 16px;
+    --color-bg: #fff;
+    --color-text: #222;
+    --color-primary: #4f46e5;
+    /* ...otros colores base... */
+  }
+  
+  /* Tema Niños */
+  .theme-kids {
+    --color-bg: #ffe4e1;
+    --color-primary: #ff69b4;
+    --font-size: 18px;
+  }
+  
+  /* Tema Jóvenes */
+  .theme-young {
+    --color-bg: #e0f7fa;
+    --color-primary: #00bcd4;
+    --font-size: 16px;
+  }
+  
+  /* Tema Adultos */
+  .theme-adult {
+    --color-bg: #f5f5f5;
+    --color-primary: #607d8b;
+    --font-size: 17px;
+  }
+  
+  /* Modo Noche */
+  .theme-night {
+    --color-bg: #222;
+    --color-text: #fff;
+  }
+  
+  /* Accesibilidad: Alto Contraste */
+  .theme-contrast {
+    --color-bg: #000;
+    --color-text: #ff0;
+  }
