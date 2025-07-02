@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\EntradasExport;
 use App\Exports\SalidasExport;
-use App\Models\Salida;
+use App\Models\salida;
 use App\Models\TipoAlerta;
 use App\Models\User;
 use App\Models\Gestion;
