@@ -1,12 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 
+const page = usePage();
+const user = page.props.auth.user;
+
 const showingNavigationDropdown = ref(false);
 const theme = ref('theme-kids');
+const title = 'Biblioteca';
 
 function setTheme(newTheme) {
     theme.value = newTheme;
@@ -15,14 +19,18 @@ function setTheme(newTheme) {
 
 onMounted(() => {
     const hour = new Date().getHours();
-    if (hour >= 19 || hour < 7) setTheme('theme-night');
-    else setTheme('theme-young');
+    setTheme(hour >= 19 || hour < 7 ? 'theme-night' : 'theme-young');
 });
 
 const logout = () => {
     router.post(route('logout'));
 };
+
+const hasRole = (roleName) => {
+    return Array.isArray(user?.roles) && user.roles.some(r => r.name === roleName);
+};
 </script>
+
 
 <template>
     <div>
@@ -48,6 +56,7 @@ const logout = () => {
                     </svg>
                     Dashboard
                     </Link>
+
                     <Link :href="route('gestion.index')"
                         class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
                         :class="{ 'bg-indigo-800 font-semibold': route().current('gestion.*') }">
@@ -56,8 +65,7 @@ const logout = () => {
                     </svg>
                     Gestiones
                     </Link>
-
-                    <Link :href="route('usuarios.index')"
+                    <Link v-if="hasRole('admin')" :href="route('usuarios.index')"
                         class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
                         :class="{ 'bg-indigo-800 font-semibold': route().current('usuarios.*') }">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -66,16 +74,6 @@ const logout = () => {
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Usuarios
-                    </Link>
-                    <Link :href="route('roles.index')"
-                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
-                        :class="{ 'bg-indigo-800 font-semibold': route().current('usuarios.*') }">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path
-                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    Roles
                     </Link>
                     <Link :href="route('asistencia.index')"
                         class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
@@ -86,6 +84,26 @@ const logout = () => {
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Asistencia
+                    </Link>
+                    <Link :href="route('roles.index')"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
+                        :class="{ 'bg-indigo-800 font-semibold': route().current('roles.*') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Roles
+                    </Link>
+                    <Link :href="route('entrada.index')"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition hover:bg-indigo-800"
+                        :class="{ 'bg-indigo-800 font-semibold': route().current('entrada.*') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Asistencia Entrada
                     </Link>
 
 
