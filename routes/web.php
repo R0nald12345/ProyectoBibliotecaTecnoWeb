@@ -1,8 +1,7 @@
 <?php
 
 use App\Http\Controllers\AsistenciaController;
-
-
+use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\GestionController;
 
 use App\Http\Controllers\HolaMundoController;
@@ -10,6 +9,9 @@ use App\Http\Controllers\ScraperController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisoController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SalidaController;
+// use App\Http\Controllers\RoleController; // Removed to avoid class name conflict
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,7 +27,19 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/entrada/create', [EntradaController::class, 'create'])->name('entrada.create');
+Route::get('/entrada', [EntradaController::class, 'index'])->name('entrada.index');
+Route::delete('/entrada/{id}', [EntradaController::class, 'destroy'])->name('entrada.destroy');
+
+
+Route::post('/entrada', [EntradaController::class, 'store'])->name('entrada.store');
+Route::post('/salida', [SalidaController::class, 'store'])->name('salida.store');
+
 Route::resource('gestion', GestionController::class);
+Route::resource('roles', RoleController::class);
+Route::resource('usuarios', UsuarioController::class);
+
+
 
 Route::middleware([
     'auth:sanctum',
@@ -45,15 +59,7 @@ Route::middleware([
     Route::get('/scrap-estudiante', [ScraperController::class, 'scrape'])->name('scraper.scrape');
 
 
-    // Rutas para la gestión de usuarios
-    Route::get('/usuarios', function () {
-        return Inertia::render('Usuario/Index');
-    })->name('usuarios.index');
 
-    // Rutas para la gestión de roles
-    Route::get('/roles', function () {
-        return Inertia::render('Rol/Index');
-    })->name('roles.index');
 
     // Rutas para la gestión de permisos
     Route::get('/permisos', function () {
@@ -65,9 +71,6 @@ Route::middleware([
         return Inertia::render('Asistencia/Index');
     })->name('asistencias.dashboard');
 
-    Route::get('/roles', function () {
-        return Inertia::render('Rol/Index');
-    })->name('roles.index');
 
 });
 
