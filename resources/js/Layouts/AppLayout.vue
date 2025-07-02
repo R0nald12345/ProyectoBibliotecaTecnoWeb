@@ -1,11 +1,24 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 
 const showingNavigationDropdown = ref(false);
+const theme = ref('theme-kids'); // Tema por defecto
+
+function setTheme(newTheme) {
+  theme.value = newTheme;
+  document.documentElement.className = newTheme; // Cambia la clase del <html>
+}
+
+// Cambia el tema automáticamente según la hora (opcional)
+onMounted(() => {
+  const hour = new Date().getHours();
+  if (hour >= 19 || hour < 7) setTheme('theme-night');
+  else setTheme('theme-young');
+});
 
 const switchToTeam = (team) => {
   router.put(route('current-team.update'), {
@@ -24,7 +37,7 @@ const logout = () => {
   <div>
     <Head :title="title" />
 
-    <div class="min-h-screen flex bg-gray-100">
+    <div class="min-h-screen flex" :style="{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)', fontSize: 'var(--font-size)' }">
       <!-- Sidebar -->
       <aside class="w-64 bg-white shadow-md p-4 hidden md:block">
         <div class="mb-6">
@@ -49,6 +62,12 @@ const logout = () => {
             </button>
           </div>
           <div class="flex items-center gap-4">
+            <select v-model="theme" @change="setTheme(theme)" class="border rounded px-2 py-1 text-sm mr-4">
+              <option value="theme-kids">Niños</option>
+              <option value="theme-young">Jóvenes</option>
+              <option value="theme-adult">Adultos</option>
+              <option value="theme-night">Noche</option>
+            </select>
             <span class="text-sm text-gray-700">{{ $page.props.auth.user.name }}</span>
             <Dropdown align="right" width="48">
               <template #trigger>
