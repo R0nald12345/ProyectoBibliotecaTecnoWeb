@@ -45,11 +45,12 @@ function deleteUsuario(id) {
     <div>
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Usuarios</h1>
-            <Link href="/usuarios/create"
+            <Link :href="route('usuarios.create')"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow">
             + Nuevo usuario
             </Link>
         </div>
+
 
         <div v-if="message" class="mb-4 p-4 rounded bg-green-100 text-green-800 border border-green-300 shadow">
             {{ message }}
@@ -64,6 +65,7 @@ function deleteUsuario(id) {
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">ID</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Nombre</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Celular</th>
@@ -73,6 +75,7 @@ function deleteUsuario(id) {
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     <tr v-for="u in filteredUsuarios" :key="u.id">
+                        <td class="px-6 py-4 text-gray-800">{{ u.id }}</td>
                         <td class="px-6 py-4 text-gray-800">{{ u.name }}</td>
                         <td class="px-6 py-4 text-gray-800">{{ u.email }}</td>
                         <td class="px-6 py-4 text-gray-800">{{ u.celular ?? '—' }}</td>
@@ -83,13 +86,11 @@ function deleteUsuario(id) {
                             <span v-else class="text-gray-500">Sin rol</span>
                         </td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <Link :href="`/usuarios/${u.id}/edit`"
+                            <Link :href="route('usuarios.edit', u.id)"
                                 class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded shadow">
                             Editar
                             </Link>
-                            <form :action="`/usuarios/${u.id}`" method="POST" @submit.prevent="deleteUsuario(u.id)"
-                                class="inline">
-                                <input type="hidden" name="_method" value="DELETE" />
+                            <form @submit.prevent="deleteUsuario(u.id)" class="inline">
                                 <button type="submit"
                                     class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow">
                                     Eliminar
