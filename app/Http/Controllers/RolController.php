@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Rol;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 
-class RoleController extends Controller
+class RolController extends Controller
 {
-
+  
 }

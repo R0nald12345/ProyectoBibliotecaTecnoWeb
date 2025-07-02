@@ -5,29 +5,31 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
 
-defineProps({ gestiones: Array })
+defineProps({
+  roles: Array
+})
 
 const flash = usePage().props.flash
 
 const message = computed(() => flash.success || flash.message)
 
-function deleteGestion(id) {
-    router.delete(`/gestion/${id}`, {
-        preserveScroll: true,
-        preserveState: false,
-    })
+function deleteRole(id) {
+  router.delete(`/roles/${id}`, {
+    preserveScroll: true,
+    preserveState: false,
+  })
 }
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-3xl font-bold text-gray-800">Gestiones</h1>
+      <h1 class="text-3xl font-bold text-gray-800">Roles</h1>
       <Link
-        href="/gestion/create"
+        href="/roles/create"
         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow"
       >
-        + Nueva gestión
+        + Nuevo rol
       </Link>
     </div>
 
@@ -43,23 +45,25 @@ function deleteGestion(id) {
         <thead class="bg-gray-50">
           <tr>
             <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Nombre</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Guard</th>
             <th class="px-6 py-3 text-right text-sm font-semibold text-gray-700">Acciones</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <tr v-for="g in gestiones" :key="g.id">
-            <td class="px-6 py-4 text-gray-800">{{ g.nombre }}</td>
+          <tr v-for="r in roles" :key="r.id">
+            <td class="px-6 py-4 text-gray-800">{{ r.name }}</td>
+            <td class="px-6 py-4 text-gray-600">{{ r.guard_name }}</td>
             <td class="px-6 py-4 text-right space-x-2">
               <Link
-                :href="`/gestion/${g.id}/edit`"
+                :href="`/roles/${r.id}/edit`"
                 class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded shadow"
               >
                 Editar
               </Link>
               <form
-                :action="`/gestion/${g.id}`"
+                :action="`/roles/${r.id}`"
                 method="POST"
-                @submit.prevent="deleteGestion(g.id)"
+                @submit.prevent="deleteRole(r.id)"
                 class="inline"
               >
                 <input type="hidden" name="_method" value="DELETE" />
