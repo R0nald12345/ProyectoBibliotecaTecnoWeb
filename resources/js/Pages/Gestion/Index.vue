@@ -12,7 +12,7 @@ const flash = usePage().props.flash
 const message = computed(() => flash.success || flash.message)
 
 function deleteGestion(id) {
-    router.delete(`/gestion/${id}`, {
+    router.delete(route('gestion.destroy', id), {
         preserveScroll: true,
         preserveState: false,
     })

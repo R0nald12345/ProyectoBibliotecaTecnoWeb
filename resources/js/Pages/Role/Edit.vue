@@ -12,7 +12,7 @@ const form = useForm({
 })
 
 function submit() {
-  form.put(`/roles/${props.role.id}`)
+  form.put(route('roles.update', props.role.id))
 }
 </script>
 

@@ -8,6 +8,10 @@ defineOptions({ layout: AppLayout })
 
 const canvasRef = ref(null)
 
+const props = defineProps({
+    entradas: Object
+})
+
 const datosGrafico = computed(() => {
     const conteo = {}
 
@@ -20,9 +24,6 @@ const datosGrafico = computed(() => {
         labels: Object.keys(conteo),
         data: Object.values(conteo)
     }
-})
-const props = defineProps({
-    entradas: Object
 })
 
 const flash = usePage().props.flash
@@ -84,7 +85,6 @@ onMounted(() => {
     })
 })
 
-
 watch(() => props.entradas, (nuevo) => {
     entradasFiltradasPorFecha.value = nuevo.data
 })
@@ -108,7 +108,7 @@ const filteredEntradas = computed(() => {
 
 function deleteEntrada(id) {
     if (confirm('¿Estás seguro de eliminar esta entrada?')) {
-        router.delete(`/entrada/${id}`, {
+        router.delete(route('entrada.destroy', id), {
             preserveScroll: true,
             preserveState: false,
         })
@@ -122,8 +122,6 @@ function exportarExcel() {
     window.open(route('entrada.export.excel') + '?' + params.toString(), '_blank')
 }
 
-
-// Mostrar paginación solo si no hay búsqueda ni filtro de fechas
 const mostrarPaginacion = computed(() =>
     !search.value && !fechaInicio.value && !fechaFin.value
 )
@@ -135,7 +133,7 @@ const mostrarPaginacion = computed(() =>
             <h1 class="text-3xl font-bold text-gray-800">Entradas</h1>
             <Link :href="route('entrada.create')"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow">
-            + Nueva entrada
+                + Nueva entrada
             </Link>
         </div>
 
@@ -166,7 +164,6 @@ const mostrarPaginacion = computed(() =>
                         class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded shadow">
                         Exportar Excel
                     </button>
-
                 </div>
             </div>
 
@@ -188,7 +185,7 @@ const mostrarPaginacion = computed(() =>
                         <td class="px-6 py-4 text-gray-800">{{ e.fecha }}</td>
                         <td class="px-6 py-4 text-gray-800">{{ e.hora }}</td>
                         <td class="px-6 py-4 text-gray-800">{{ e.user?.name || '—' }}</td>
-                        <td class="px-6 py-4 text-gray-800">{{ e.gestion?.nombre || '—' }}</td> <!-- 👈 Gestión -->
+                        <td class="px-6 py-4 text-gray-800">{{ e.gestion?.nombre || '—' }}</td>
                         <td class="px-6 py-4 text-gray-800">{{ e.tipoalerta?.descripcion || '—' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
                             <form @submit.prevent="deleteEntrada(e.id)" class="inline">
@@ -201,7 +198,6 @@ const mostrarPaginacion = computed(() =>
                     </tr>
                 </tbody>
             </table>
-
 
             <div v-if="filteredEntradas.length === 0" class="text-center text-gray-500 py-4">
                 No se encontraron entradas.
@@ -218,10 +214,10 @@ const mostrarPaginacion = computed(() =>
                 </template>
             </div>
         </div>
-        <div class="mt-10 bg-white p-4 rounded shadow w-full h-[400px]">
-    <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
-    <canvas ref="canvasRef" class="w-full h-full"></canvas>
-</div>
 
+        <div class="mt-10 bg-white p-4 rounded shadow w-full h-[400px]">
+            <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
+            <canvas ref="canvasRef" class="w-full h-full"></canvas>
+        </div>
     </div>
 </template>

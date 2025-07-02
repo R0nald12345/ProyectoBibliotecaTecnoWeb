@@ -80,7 +80,8 @@ class SalidaController extends Controller
     {
         $salida = Salida::findOrFail($id);
         $salida->delete();
-
+    
         return redirect()->route('salida.index')->with('success', 'Salida eliminada correctamente.');
     }
+    
 }

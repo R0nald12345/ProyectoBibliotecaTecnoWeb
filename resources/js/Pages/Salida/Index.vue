@@ -65,7 +65,7 @@ const filteredSalidas = computed(() => {
 
 function deleteSalida(id) {
   if (confirm('¿Estás seguro de eliminar esta salida?')) {
-    router.delete(`/salida/${id}`, {
+    router.delete(route('salida.destroy', id), {
       preserveScroll: true,
       preserveState: false,
     })
