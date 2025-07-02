@@ -43,11 +43,12 @@ function deleteEntrada(id) {
     <div>
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Entradas</h1>
-            <Link href="/entrada/create"
-                  class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow">
-                + Nueva entrada
+            <Link :href="route('entrada.create')"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow">
+            + Nueva entrada
             </Link>
         </div>
+
 
         <div v-if="message" class="mb-4 p-4 rounded bg-green-100 text-green-800 border border-green-300 shadow">
             {{ message }}
@@ -56,7 +57,7 @@ function deleteEntrada(id) {
         <div class="overflow-x-auto bg-white shadow rounded-lg">
             <div class="mb-4">
                 <input v-model="search" type="text" placeholder="Buscar entrada..."
-                       class="w-full sm:w-1/3 px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring focus:ring-blue-200" />
+                    class="w-full sm:w-1/3 px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring focus:ring-blue-200" />
             </div>
 
             <table class="min-w-full divide-y divide-gray-200">
@@ -78,10 +79,10 @@ function deleteEntrada(id) {
                         <td class="px-6 py-4 text-gray-800">{{ e.user?.name || '—' }}</td>
                         <td class="px-6 py-4 text-gray-800">{{ e.tipoalerta?.descripcion || '—' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
-                           
+
                             <form @submit.prevent="deleteEntrada(e.id)" class="inline">
                                 <button type="submit"
-                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow">
+                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded shadow">
                                     Eliminar
                                 </button>
                             </form>
@@ -97,11 +98,11 @@ function deleteEntrada(id) {
             <div class="mt-4 flex justify-center space-x-2" v-if="!search">
                 <template v-for="link in entradas.links" :key="link.label">
                     <component :is="link.url ? Link : 'span'" :href="link.url" class="px-3 py-1 rounded border text-sm"
-                               :class="{
-                                   'bg-blue-600 text-white font-semibold': link.active,
-                                   'bg-white text-gray-700 hover:bg-gray-100': !link.active,
-                                   'cursor-not-allowed opacity-50': !link.url
-                               }" v-html="link.label" />
+                        :class="{
+                            'bg-blue-600 text-white font-semibold': link.active,
+                            'bg-white text-gray-700 hover:bg-gray-100': !link.active,
+                            'cursor-not-allowed opacity-50': !link.url
+                        }" v-html="link.label" />
                 </template>
             </div>
         </div>
