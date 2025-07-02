@@ -2,87 +2,85 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\salida;
-use App\Models\tipoalerta;
+use App\Exports\EntradasExport;
+use App\Exports\SalidasExport;
+use App\Models\Salida;
+use App\Models\TipoAlerta;
+use App\Models\User;
+use App\Models\Gestion;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SalidaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new SalidasExport($request->inicio, $request->fin), 'salidas.xlsx');
+    }
+
+
     public function index()
     {
-        //
+        $salidas = Salida::with(['user', 'tipoalerta', 'gestion'])
+            ->latest()
+            ->paginate(10);
+
+        return Inertia::render('Salida/Index', [
+            'salidas' => $salidas
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $usuarios = User::select('id', 'name')->get();
+        $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
+        $gestiones = Gestion::select('id', 'nombre')->get();
+
+        $fecha = now()->format('Y-m-d');
+        $hora = now()->format('H:i');
+
+        return Inertia::render('Salida/Create', [
+            'usuarios' => $usuarios,
+            'tipos_alerta' => $tiposAlerta,
+            'gestiones' => $gestiones,
+            'fecha_actual' => $fecha,
+            'hora_actual' => $hora,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'descripcion' => 'required|string|max:255',
-            'fecha' => 'required|date',
-            'hora' => 'required',
-            'user_id' => 'required|exists:users,id',
-            'tipoalerta' => 'required|string|max:255', // Nuevo campo
+            'descripcion'     => 'required|string|max:255',
+            'fecha'           => 'required|date',
+            'hora'            => 'required',
+            'user_id'         => 'required|exists:users,id',
+            'tipoalerta_id'   => 'required|exists:tipoalerta,id',
+            'gestion_id'      => 'required|exists:gestion,id',
         ]);
 
-        // Crear tipo de alerta
-        $tipoAlerta = tipoalerta::create([
-            'descripcion' => $data['tipoalerta'],
-        ]);
+        Salida::create($data);
 
-        // Crear entrada con el nuevo tipo de alerta
-        salida::create([
-            'descripcion'     => $data['descripcion'],
-            'fecha'           => $data['fecha'],
-            'hora'            => $data['hora'],
-            'user_id'         => $data['user_id'],
-            'tipoalerta_id'   => $tipoAlerta->id,
-        ]);
-
-        return redirect()->route('salida.index')->with('success', 'Salidad creada correctamente.');
+        return redirect()->route('salida.index')->with('success', 'Salida creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(salida $salida)
+    public function edit(Salida $salida)
     {
-        //
+        // Implementar si necesitas edición
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(salida $salida)
+    public function update(Request $request, Salida $salida)
     {
-        //
+        // Implementar si necesitas actualización
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, salida $salida)
+    public function destroy($id)
     {
-        //
-    }
+        $salida = Salida::findOrFail($id);
+        $salida->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(salida $salida)
-    {
-        //
+        return redirect()->route('salida.index')->with('success', 'Salida eliminada correctamente.');
     }
 }

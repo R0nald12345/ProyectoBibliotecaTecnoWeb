@@ -47,12 +47,14 @@ function submit() {
         <label class="block text-sm font-medium text-gray-700">Fecha</label>
         <input v-model="form.fecha" type="date"
           class="w-full mt-1 px-4 py-2 border rounded shadow-sm focus:ring focus:ring-blue-200" />
+        <div v-if="form.errors.fecha" class="text-red-500 text-sm mt-1">{{ form.errors.fecha }}</div>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Hora</label>
         <input v-model="form.hora" type="time"
           class="w-full mt-1 px-4 py-2 border rounded shadow-sm focus:ring focus:ring-blue-200" />
+        <div v-if="form.errors.hora" class="text-red-500 text-sm mt-1">{{ form.errors.hora }}</div>
       </div>
 
       <div>

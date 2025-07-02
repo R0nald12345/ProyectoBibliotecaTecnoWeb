@@ -41,5 +41,7 @@ class DatabaseSeeder extends Seeder
             );
             $user->assignRole($data['role']);
         }
+
+         $this->call(TipoAlertaSeeder::class);
     }
 }

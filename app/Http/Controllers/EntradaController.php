@@ -8,6 +8,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\EntradasExport;
+use App\Models\Gestion;
 
 class EntradaController extends Controller
 {
@@ -15,9 +18,20 @@ class EntradaController extends Controller
      * Display a listing of the resource.
      */
 
+
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new EntradasExport($request->inicio, $request->fin), 'entradas.xlsx');
+    }
+
+
+    // EntradaController.php
     public function index()
     {
-        $entradas = entrada::with(['user', 'tipoalerta'])->latest()->paginate(10);
+        $entradas = Entrada::with(['user', 'tipoalerta', 'gestion']) // 👈 añade 'gestion'
+            ->latest()
+            ->paginate(10);
 
         return Inertia::render('Entrada/Index', [
             'entradas' => $entradas
@@ -31,6 +45,7 @@ class EntradaController extends Controller
     {
         $usuarios = User::select('id', 'name')->get();
         $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
+        $gestiones = Gestion::select('id', 'nombre')->get(); // ✅ nuevo
 
         $fecha = now()->format('Y-m-d');
         $hora = now()->format('H:i');
@@ -38,6 +53,7 @@ class EntradaController extends Controller
         return Inertia::render('Entrada/Create', [
             'usuarios' => $usuarios,
             'tipos_alerta' => $tiposAlerta,
+            'gestiones' => $gestiones, // ✅ enviar a la vista
             'fecha_actual' => $fecha,
             'hora_actual' => $hora,
         ]);
@@ -54,12 +70,14 @@ class EntradaController extends Controller
             'hora' => 'required',
             'user_id' => 'required|exists:users,id',
             'tipoalerta_id' => 'required|exists:tipoalerta,id',
+            'gestion_id' => 'required|exists:gestion,id', // ✅ nuevo campo
         ]);
 
         Entrada::create($data);
 
         return redirect()->route('entrada.index')->with('success', 'Entrada creada correctamente.');
     }
+
 
 
     /**

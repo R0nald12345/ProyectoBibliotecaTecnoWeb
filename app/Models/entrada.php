@@ -15,6 +15,7 @@ class entrada extends Model
         'hora',
         'user_id',
         'tipoalerta_id',
+        'gestion_id',
     ];
 
     public function user()
@@ -25,5 +26,10 @@ class entrada extends Model
     public function tipoalerta()
     {
         return $this->belongsTo(tipoalerta::class);
+    }
+    // Entrada.php (modelo)
+    public function gestion()
+    {
+        return $this->belongsTo(Gestion::class);
     }
 }

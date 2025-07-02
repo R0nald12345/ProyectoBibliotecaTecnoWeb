@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AsistenciaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\GestionController;
 
@@ -27,13 +28,25 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/dashboard', [DashboardController::class, 'graficoEntradasPorGestion'])->name('dashboard');
+
+Route::get('/salidas', [SalidaController::class, 'index'])->name('salida.index');
+Route::get('/salidas/export', [SalidaController::class, 'exportExcel'])->name('salida.export.excel');
+Route::get('/salidas/create', [SalidaController::class, 'create'])->name('salida.create');
+Route::post('/salidas', [SalidaController::class, 'store'])->name('salida.store');
+Route::delete('/salidas/{id}', [SalidaController::class, 'destroy']);
+
+
+
+Route::get('/entrada/export/pdf', [EntradaController::class, 'exportPdf'])->name('entrada.export.pdf');
+Route::get('/entrada/export/excel', [EntradaController::class, 'exportExcel'])->name('entrada.export.excel');
 Route::get('/entrada/create', [EntradaController::class, 'create'])->name('entrada.create');
 Route::get('/entrada', [EntradaController::class, 'index'])->name('entrada.index');
 Route::delete('/entrada/{id}', [EntradaController::class, 'destroy'])->name('entrada.destroy');
 
 
 Route::post('/entrada', [EntradaController::class, 'store'])->name('entrada.store');
-Route::post('/salida', [SalidaController::class, 'store'])->name('salida.store');
+// Route::post('/salida', [SalidaController::class, 'store'])->name('salida.store');
 
 Route::resource('gestion', GestionController::class);
 Route::resource('roles', RoleController::class);
