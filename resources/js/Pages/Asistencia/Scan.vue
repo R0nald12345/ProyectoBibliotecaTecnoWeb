@@ -299,36 +299,37 @@ const toggleFlip = () => {
 
 
 // Función para extraer los datos del estudiante desde la URL
+
 const extraerDatosEstudiante = async (url) => {
   try {
     cargandoDatos.value = true;
-
-    const response = await fetch(`/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/scrap-estudiante?url=${encodeURIComponent(url)}`, {
+    
+    const response = await fetch(`/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/scrap-estudiante?url=${url}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       }
     });
-
+    
     if (!response.ok) {
       throw new Error('Error al hacer scraping en el servidor');
     }
-
+    
     const data = await response.json();
     estudianteData.value = data;
-
+    
     const esValido = data && Object.keys(data).length > 0 && !data.error;
-
+    
     estudianteData.value = esValido ? data : {};
-
+    
     if (!esValido) {
       mensaje.value = 'Documento no válido';
       mensajeEstilo.value = 'bg-red-100 text-red-800';
       return; // Salir temprano si no es válido
     }
-
+    
     console.log(data);
-
+    
     // Registrar entrada automáticamente
     const entradaData = {
       descripcion: 'Estudiante aceptado',
@@ -337,7 +338,7 @@ const extraerDatosEstudiante = async (url) => {
       user_id: parseInt(data.REGISTRO),
       tipoalerta_id: 1,
     };
-
+    
     // Hacer POST a través de Inertia
     router.post('/entrada', entradaData, {
       preserveScroll: true,
@@ -350,15 +351,12 @@ const extraerDatosEstudiante = async (url) => {
       onError: (errors) => {
         console.error('Error al registrar entrada:', errors);
         // ✅ Mensaje de error personalizado cuando falla la entrada
-        mensaje.value = `Error: usuario ${data.NOMBRE || 'desconocido'} no tiene una cuenta, hablar con el administrador`;
+        mensaje.value = `Error usuario ${data.NOMBRE || 'desconocido'} no tiene una cuenta, hablar con el administrador`;
         mensajeEstilo.value = 'bg-red-100 text-red-800';
       },
     });
-
-    // ❌ REMOVIDO: Estas líneas que sobrescribían el mensaje
-    // mensaje.value = 'Datos del estudiante extraídos';
-    // mensajeEstilo.value = 'bg-green-100 text-green-800';
-
+    
+    
   } catch (error) {
     console.error('Error al extraer datos:', error);
     mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`;
