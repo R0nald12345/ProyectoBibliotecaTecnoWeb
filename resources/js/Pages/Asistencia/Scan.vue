@@ -303,33 +303,33 @@ const toggleFlip = () => {
 const extraerDatosEstudiante = async (url) => {
   try {
     cargandoDatos.value = true;
-    
+
     const response = await fetch(`/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/scrap-estudiante?url=${url}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       }
     });
-    
+
     if (!response.ok) {
       throw new Error('Error al hacer scraping en el servidor');
     }
-    
+
     const data = await response.json();
     estudianteData.value = data;
-    
+
     const esValido = data && Object.keys(data).length > 0 && !data.error;
-    
+
     estudianteData.value = esValido ? data : {};
-    
+
     if (!esValido) {
       mensaje.value = 'Documento no válido';
       mensajeEstilo.value = 'bg-red-100 text-red-800';
       return; // Salir temprano si no es válido
     }
-    
+
     console.log(data);
-    
+
     // Registrar entrada automáticamente
     const entradaData = {
       descripcion: 'Estudiante aceptado',
@@ -338,9 +338,8 @@ const extraerDatosEstudiante = async (url) => {
       user_id: parseInt(data.REGISTRO),
       tipoalerta_id: 1,
     };
-    
-    // Hacer POST a través de Inertia
-    router.post(route('entrada.store'), entradaData, {
+
+    router.post('/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/entrada', entradaData, {
       preserveScroll: true,
       onSuccess: () => {
         console.log('Entrada registrada automáticamente.');

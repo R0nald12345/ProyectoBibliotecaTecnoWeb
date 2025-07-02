@@ -340,7 +340,7 @@ const extraerDatosEstudiante = async (url) => {
     };
 
     // Hacer POST a través de Inertia
-    router.post('/salidas', entradaData, {
+    router.post('/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/salidas', entradaData, {
       preserveScroll: true,
       onSuccess: () => {
         console.log('Salida registrada automáticamente.');
