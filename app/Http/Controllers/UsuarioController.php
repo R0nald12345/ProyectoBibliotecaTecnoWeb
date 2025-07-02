@@ -32,14 +32,16 @@ class UsuarioController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'id'       => 'required|numeric|unique:users,id',
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|confirmed',
             'celular'  => 'nullable|string|max:20',
             'role'     => 'required|exists:roles,name',
         ]);
 
         $user = User::create([
+            'id'       => $data['id'],
             'name'     => $data['name'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),

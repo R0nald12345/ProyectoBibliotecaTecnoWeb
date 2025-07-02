@@ -9,56 +9,37 @@ use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Crear el permiso
+        // Crear permiso
         $permission = Permission::firstOrCreate(['name' => 'Editar']);
 
-        // Crear el rol y asignarle el permiso
-        $role = Role::firstOrCreate(['name' => 'admin']);
-        $role->givePermissionTo($permission);
+        // Crear roles
+        Role::firstOrCreate(['name' => 'admin'])->givePermissionTo($permission);
+        Role::firstOrCreate(['name' => 'administrativo']);
+        Role::firstOrCreate(['name' => 'docente']);
+        Role::firstOrCreate(['name' => 'estudiante']);
+        Role::firstOrCreate(['name' => 'visita']);
 
-        $role = Role::firstOrCreate(['name' => 'administrativo']);
-        $role = Role::firstOrCreate(['name' => 'docente']);
-        $role = Role::firstOrCreate(['name' => 'estudiante']);
-        $role = Role::firstOrCreate(['name' => 'visita']);
+        // Crear usuarios con IDs manuales
+        $usuarios = [
+            ['id' => '1', 'email' => 'daniel@gmail.com', 'name' => 'castedo daniel', 'role' => 'admin'],
+            ['id' => '2', 'email' => 'administrador@gmail.com', 'name' => 'ronald camino', 'role' => 'administrativo'],
+            ['id' => '3', 'email' => 'docente@gmail.com', 'name' => 'Mirian Mendez', 'role' => 'docente'],
+            ['id' => '4', 'email' => 'micaelcardona@gmail.com', 'name' => 'micael cardona', 'role' => 'estudiante'],
+            ['id' => '5', 'email' => 'visita@gmail.com', 'name' => 'visitante', 'role' => 'visita'],
+        ];
 
-        // Crear el usuario y asignarle el rol
-        $user = User::firstOrCreate(
-            ['email' => 'daniel@gmail.com'],
-            ['name' => 'castedo daniel', 'password' => bcrypt('12345678')]
-        );
-        $user->assignRole('admin');
-
-        // Crear el usuario y asignarle el rol
-        $user = User::firstOrCreate(
-            ['email' => 'administrador@gmail.com'],
-            ['name' => 'ronald camino', 'password' => bcrypt('12345678')]
-        );
-        $user->assignRole('administrativo');
-
-        // Crear el usuario y asignarle el rol
-        $user = User::firstOrCreate(
-            ['email' => 'docente@gmail.com'],
-            ['name' => 'Mirian Mendez', 'password' => bcrypt('12345678')]
-        );
-        $user->assignRole('docente');
-
-        // Crear el usuario y asignarle el rol
-        $user = User::firstOrCreate(
-            ['email' => 'micaelcardona@gmail.com'],
-            ['name' => 'micael cardona ', 'password' => bcrypt('12345678')]
-        );
-        $user->assignRole('estudiante');
-
-
-        $user = User::firstOrCreate(
-            ['email' => 'visita@gmail.com'],
-            ['name' => 'visitante', 'password' => bcrypt('12345678')]
-        );
-        $user->assignRole('visita');
+        foreach ($usuarios as $data) {
+            $user = User::firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'id' => $data['id'],
+                    'name' => $data['name'],
+                    'password' => bcrypt('12345678'),
+                ]
+            );
+            $user->assignRole($data['role']);
+        }
     }
 }
