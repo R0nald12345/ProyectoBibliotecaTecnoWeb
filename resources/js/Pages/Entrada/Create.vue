@@ -22,7 +22,7 @@ const form = useForm({
 })
 
 function submit() {
-  form.post('/salidas', {
+  form.post(route('entrada.store'), {
     preserveScroll: true,
   })
 }
@@ -32,7 +32,7 @@ function submit() {
   <div>
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-bold text-gray-800">Crear Salida</h1>
-      <Link href="/salidas" class="text-blue-600 hover:underline font-semibold">← Volver</Link>
+      <Link href="route('entrada.index')" class="text-blue-600 hover:underline font-semibold">← Volver</Link>
     </div>
 
     <form @submit.prevent="submit" class="bg-white p-6 rounded shadow space-y-4">

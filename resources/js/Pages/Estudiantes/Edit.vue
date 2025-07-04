@@ -37,6 +37,6 @@ const form = useForm({
 })
 
 function submit() {
-  form.put(`/estudiantes/${props.estudiante.reg}`)
+  form.put(route('estudiantes.update', props.estudiante.reg))
 }
 </script>

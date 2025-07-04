@@ -64,12 +64,21 @@ const filteredSalidas = computed(() => {
 })
 
 function deleteSalida(id) {
+<<<<<<< HEAD
     if (confirm('¿Estás seguro de eliminar esta salida?')) {
         router.delete(route('salida.destroy', id), {
             preserveScroll: true,
             preserveState: false,
         })
     }
+=======
+  if (confirm('¿Estás seguro de eliminar esta salida?')) {
+    router.delete(route('salida.destroy', id), {
+      preserveScroll: true,
+      preserveState: false,
+    })
+  }
+>>>>>>> d506f30c229d9fa8c5d880a192c744887c2cc21c
 }
 
 function exportarExcel() {

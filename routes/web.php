@@ -33,7 +33,11 @@ Route::get('/salidas', [SalidaController::class, 'index'])->name('salida.index')
 Route::get('/salidas/export', [SalidaController::class, 'exportExcel'])->name('salida.export.excel');
 Route::get('/salidas/create', [SalidaController::class, 'create'])->name('salida.create');
 Route::post('/salidas', [SalidaController::class, 'store'])->name('salida.store');
+<<<<<<< HEAD
 Route::delete('/salida/{id}', [SalidaController::class, 'destroy'])->name('salida.destroy');
+=======
+Route::delete('/salidas/{id}', [SalidaController::class, 'destroy'])->name('salida.destroy');
+>>>>>>> d506f30c229d9fa8c5d880a192c744887c2cc21c
 
 
 

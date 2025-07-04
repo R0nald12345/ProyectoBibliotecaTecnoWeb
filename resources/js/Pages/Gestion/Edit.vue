@@ -11,7 +11,7 @@ const form = useForm({
 })
 
 function submit() {
-  form.put(`/gestion/${props.gestion.id}`)
+  form.put(route('gestion.update', props.gestion.id))
 }
 </script>
 
