@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exports\EntradasExport;
 use App\Exports\SalidasExport;
-use App\Models\salida;
-use App\Models\tipoalerta;
+use App\Models\Salida;
+use App\Models\TipoAlerta;
 use App\Models\User;
 use App\Models\Gestion;
 use Carbon\Carbon;
@@ -36,7 +36,7 @@ class SalidaController extends Controller
     public function create()
     {
         $usuarios = User::select('id', 'name')->get();
-        $tiposAlerta = tipoalerta::select('id', 'descripcion')->get();
+        $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
         $gestiones = Gestion::select('id', 'nombre')->get();
 
         $fecha = now()->format('Y-m-d');
@@ -72,6 +72,7 @@ class SalidaController extends Controller
 
         $hoy = Carbon::today();
 
+
         Salida::create([
             'descripcion' => 'Salida por código QR',
             'fecha' => $hoy,
@@ -101,8 +102,7 @@ class SalidaController extends Controller
     {
         $salida = Salida::findOrFail($id);
         $salida->delete();
-    
+
         return redirect()->route('salida.index')->with('success', 'Salida eliminada correctamente.');
     }
-    
 }

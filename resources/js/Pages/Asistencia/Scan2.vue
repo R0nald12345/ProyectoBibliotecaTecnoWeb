@@ -339,7 +339,6 @@ const extraerDatosEstudiante = async (url) => {
       tipoalerta_id: 1,
     };
 
-<<<<<<< HEAD
     axios.post('/salida', entradaData)
             .then(res => {
                 mensaje.value = res.data.message;
@@ -352,24 +351,6 @@ const extraerDatosEstudiante = async (url) => {
             .finally(() => {
                 cargandoDatos.value = false;
             });
-=======
-    // Hacer POST a través de Inertia
-    router.post('/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/salidas', entradaData, {
-      preserveScroll: true,
-      onSuccess: () => {
-        console.log('Salida registrada automáticamente.');
-        // ✅ Mensaje de éxito solo cuando todo sale bien
-        mensaje.value = 'Datos del estudiante extraídos correctamente';
-        mensajeEstilo.value = 'bg-green-100 text-green-800';
-      },
-      onError: (errors) => {
-        console.error('Error al registrar Salida:', errors);
-        // ✅ Mensaje de error personalizado cuando falla la entrada
-        mensaje.value = `Error usuario ${data.NOMBRE || 'desconocido'} no tiene una cuenta, hablar con el administrador`;
-        mensajeEstilo.value = 'bg-red-100 text-red-800';
-      },
-    });
->>>>>>> d506f30c229d9fa8c5d880a192c744887c2cc21c
 
 
   } catch (error) {

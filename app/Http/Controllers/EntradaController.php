@@ -83,6 +83,7 @@ class EntradaController extends Controller
 
         $hoy = Carbon::today();
 
+
         Entrada::create([
             'descripcion' => 'Entrada por código QR',
             'fecha' => $hoy,
