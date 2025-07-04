@@ -24,7 +24,7 @@ class salida extends Model
 
     public function tipoalerta()
     {
-        return $this->belongsTo(TipoAlerta::class);
+        return $this->belongsTo(tipoalerta::class);
     }
 
     public function gestion()
