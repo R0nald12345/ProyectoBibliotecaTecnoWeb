@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Estudiante;
 use App\Models\Asistencia;
+use App\Models\entrada;
+use App\Models\User;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
@@ -22,44 +24,42 @@ class AsistenciaController extends Controller
 
     public function registrar(Request $request)
     {
-        $estudiante = Estudiante::where('codigo', $request->codigo)->first();
+        $codigo = $request->codigo;
 
-        if (!$estudiante) {
-            return response()->json(['status' => 'error', 'message' => 'Estudiante no encontrado'], 404);
+        // Buscar usuario por ID (usando el código como ID)
+        $user = User::find($codigo);
+        dd($user,$request->all());
+        if (!$user) {
+            return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
+        }
+
+
+        // Asignar rol estudiante si no lo tiene
+        if (!$user->hasRole('estudiante')) {
+            $user->assignRole('estudiante');
         }
 
         $hoy = Carbon::today();
 
-        $ultimaAsistencia = Asistencia::where('estudiante_id', $estudiante->id)
+        // Verificar si ya registró entrada hoy
+        $existeHoy = Entrada::where('user_id', $user->id)
             ->whereDate('fecha', $hoy)
-            ->orderByDesc('hora')
-            ->first();
+            ->exists();
 
-        if (!$ultimaAsistencia) {
-            // No hay asistencia hoy → Registrar ENTRADA
-            Asistencia::create([
-                'estudiante_id' => $estudiante->id,
-                'fecha' => $hoy,
-                'hora' => Carbon::now()->toTimeString(),
-                'estado' => 1, // entrada
-            ]);
-
-            return response()->json(['status' => 'success', 'message' => 'Asistencia registrada (Entrada)']);
+        if ($existeHoy) {
+            return response()->json(['status' => 'info', 'message' => 'Ya registró asistencia hoy']);
         }
 
-        if ($ultimaAsistencia->estado == 1) {
-            // Ya registró entrada → Registrar SALIDA
-            Asistencia::create([
-                'estudiante_id' => $estudiante->id,
-                'fecha' => $hoy,
-                'hora' => Carbon::now()->toTimeString(),
-                'estado' => 0, // salida
-            ]);
+        // Registrar nueva entrada
+        entrada::create([
+            'descripcion' => 'Entrada por código QR',
+            'fecha' => $hoy,
+            'hora' => Carbon::now()->toTimeString(),
+            'user_id' => $user->id,
+            'gestion_id' => $request->gestion_id,      // debe enviarse desde el frontend
+            'tipoalerta_id' => $request->tipoalerta_id, // también desde el frontend
+        ]);
 
-            return response()->json(['status' => 'success', 'message' => 'Salida registrada']);
-        }
-
-        // Ya tiene una salida hoy
-        return response()->json(['status' => 'info', 'message' => 'Ya registró entrada y salida hoy']);
+        return response()->json(['status' => 'success', 'message' => 'Asistencia registrada']);
     }
 }

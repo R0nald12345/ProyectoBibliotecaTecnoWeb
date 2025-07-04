@@ -304,7 +304,7 @@ const extraerDatosEstudiante = async (url) => {
   try {
     cargandoDatos.value = true;
 
-    const response = await fetch(`/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/scrap-estudiante?url=${url}`, {
+    const response = await fetch(`/scrap-estudiante?url=${url}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -339,22 +339,18 @@ const extraerDatosEstudiante = async (url) => {
       tipoalerta_id: 1,
     };
 
-    // Hacer POST a través de Inertia
-    router.post('/salidas', entradaData, {
-      preserveScroll: true,
-      onSuccess: () => {
-        console.log('Salida registrada automáticamente.');
-        // ✅ Mensaje de éxito solo cuando todo sale bien
-        mensaje.value = 'Datos del estudiante extraídos correctamente';
-        mensajeEstilo.value = 'bg-green-100 text-green-800';
-      },
-      onError: (errors) => {
-        console.error('Error al registrar Salida:', errors);
-        // ✅ Mensaje de error personalizado cuando falla la entrada
-        mensaje.value = `Error usuario ${data.NOMBRE || 'desconocido'} no tiene una cuenta, hablar con el administrador`;
-        mensajeEstilo.value = 'bg-red-100 text-red-800';
-      },
-    });
+    axios.post('/salida', entradaData)
+            .then(res => {
+                mensaje.value = res.data.message;
+                mensajeEstilo.value = 'bg-green-100 text-green-800';
+            })
+            .catch(err => {
+                mensaje.value = err.response?.data?.message || 'Error al registrar entrada';
+                mensajeEstilo.value = 'bg-red-100 text-red-800';
+            })
+            .finally(() => {
+                cargandoDatos.value = false;
+            });
 
 
   } catch (error) {

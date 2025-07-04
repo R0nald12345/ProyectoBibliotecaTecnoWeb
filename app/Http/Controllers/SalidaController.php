@@ -8,6 +8,7 @@ use App\Models\Salida;
 use App\Models\TipoAlerta;
 use App\Models\User;
 use App\Models\Gestion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -52,18 +53,38 @@ class SalidaController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'descripcion'     => 'required|string|max:255',
-            'fecha'           => 'required|date',
-            'hora'            => 'required',
-            'user_id'         => 'required|exists:users,id',
-            'tipoalerta_id'   => 'required|exists:tipoalerta,id',
-            'gestion_id'      => 'required|exists:gestion,id',
+        $codigo = $request->user_id;
+
+        // Buscar usuario
+        $user = User::find($codigo);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Usuario no encontrado',
+            ], 404);
+        }
+
+        // Asignar rol si no lo tiene
+        if (!$user->hasRole('estudiante')) {
+            $user->assignRole('estudiante');
+        }
+
+        $hoy = Carbon::today();
+
+        Salida::create([
+            'descripcion' => 'Salida por código QR',
+            'fecha' => $hoy,
+            'hora' => Carbon::now()->toTimeString(),
+            'user_id' => $user->id,
+            'gestion_id' => 1,
+            'tipoalerta_id' => $request->tipoalerta_id,
         ]);
 
-        Salida::create($data);
-
-        return redirect()->route('salida.index')->with('success', 'Salida creada correctamente.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Asistencia Salida registrada correctamente',
+        ]);
     }
 
     public function edit(Salida $salida)

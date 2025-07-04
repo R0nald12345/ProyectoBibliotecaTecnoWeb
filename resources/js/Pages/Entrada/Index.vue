@@ -108,7 +108,7 @@ const filteredEntradas = computed(() => {
 
 function deleteEntrada(id) {
     if (confirm('¿Estás seguro de eliminar esta entrada?')) {
-        router.delete(`/entrada/${id}`, {
+        router.delete(route('entrada.destroy', id), {
             preserveScroll: true,
             preserveState: false,
         })
@@ -219,9 +219,9 @@ const mostrarPaginacion = computed(() =>
             </div>
         </div>
         <div class="mt-10 bg-white p-4 rounded shadow w-full h-[400px]">
-    <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
-    <canvas ref="canvasRef" class="w-full h-full"></canvas>
-</div>
+            <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
+            <canvas ref="canvasRef" class="w-full h-full"></canvas>
+        </div>
 
     </div>
 </template>

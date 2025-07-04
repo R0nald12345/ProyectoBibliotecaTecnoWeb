@@ -33,7 +33,7 @@ Route::get('/salidas', [SalidaController::class, 'index'])->name('salida.index')
 Route::get('/salidas/export', [SalidaController::class, 'exportExcel'])->name('salida.export.excel');
 Route::get('/salidas/create', [SalidaController::class, 'create'])->name('salida.create');
 Route::post('/salidas', [SalidaController::class, 'store'])->name('salida.store');
-Route::delete('/salidas/{id}', [SalidaController::class, 'destroy']);
+Route::delete('/salida/{id}', [SalidaController::class, 'destroy'])->name('salida.destroy');
 
 
 
@@ -45,7 +45,8 @@ Route::delete('/entrada/{id}', [EntradaController::class, 'destroy'])->name('ent
 
 
 Route::post('/entrada', [EntradaController::class, 'store'])->name('entrada.store');
-// Route::post('/salida', [SalidaController::class, 'store'])->name('salida.store');
+Route::post('/salida', [SalidaController::class, 'store'])->name('salida.store');
+
 
 Route::resource('gestion', GestionController::class);
 Route::resource('roles', RoleController::class);
