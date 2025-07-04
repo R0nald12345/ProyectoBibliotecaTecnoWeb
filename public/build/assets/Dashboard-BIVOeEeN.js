@@ -1,0 +1,1 @@
+import{_ as a}from"./AppLayout-BWUXbOF7.js";import{c as e,o,w as r,g as s}from"./app-CxS7mVwd.js";import"./_plugin-vue_export-helper-DlAUqK2U.js";const c={__name:"Dashboard",setup(_){return(i,t)=>(o(),e(a,{title:"Dashboard"},{default:r(()=>t[0]||(t[0]=[s(" Bienvenido ")])),_:1}))}};export{c as default};

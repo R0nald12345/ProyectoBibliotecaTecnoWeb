@@ -214,13 +214,6 @@ const mostrarPaginacion = computed(() =>
                 </template>
             </div>
         </div>
-<<<<<<< HEAD
-        <div class="mt-10 bg-white p-4 rounded shadow w-full h-[400px]">
-            <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
-            <canvas ref="canvasRef" class="w-full h-full"></canvas>
-        </div>
-=======
->>>>>>> d506f30c229d9fa8c5d880a192c744887c2cc21c
 
         <div class="mt-10 bg-white p-4 rounded shadow w-full h-[400px]">
             <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
