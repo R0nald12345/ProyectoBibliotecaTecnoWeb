@@ -88,4 +88,3 @@ Route::middleware([
 
 });
 
-// Se eliminó la llave } extra que estaba al final del código
