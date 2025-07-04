@@ -339,7 +339,7 @@ const extraerDatosEstudiante = async (url) => {
       tipoalerta_id: 1,
     };
 
-    axios.post('/salida', entradaData)
+   axios.post(route('salida.store'), entradaData)
             .then(res => {
                 mensaje.value = res.data.message;
                 mensajeEstilo.value = 'bg-green-100 text-green-800';
