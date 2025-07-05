@@ -12,6 +12,7 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalidaController;
+use App\Http\Controllers\TipoalertaController;
 // use App\Http\Controllers\RoleController; // Removed to avoid class name conflict
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +37,7 @@ Route::post('/salidas', [SalidaController::class, 'store'])->name('salida.store'
 Route::delete('/salida/{id}', [SalidaController::class, 'destroy'])->name('salida.destroy');
 
 
-
+ 
 Route::get('/entrada/export/pdf', [EntradaController::class, 'exportPdf'])->name('entrada.export.pdf');
 Route::get('/entrada/export/excel', [EntradaController::class, 'exportExcel'])->name('entrada.export.excel');
 Route::get('/entrada/create', [EntradaController::class, 'create'])->name('entrada.create');
@@ -49,6 +50,9 @@ Route::post('/salida', [SalidaController::class, 'store'])->name('salida.store')
 
 
 Route::resource('gestion', GestionController::class);
+Route::resource('tipoalerta', TipoalertaController::class)->parameters([
+    'tipoalerta' => 'tipoalerta'
+]);
 Route::resource('roles', RoleController::class);
 Route::resource('usuarios', UsuarioController::class);
 

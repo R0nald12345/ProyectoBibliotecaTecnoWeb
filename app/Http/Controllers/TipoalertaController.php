@@ -4,62 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Models\tipoalerta;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TipoalertaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $alertas = tipoalerta::all();
+        return Inertia::render('Alertas/Index', ['alertas' => $alertas]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return Inertia::render('Alertas/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'descripcion' => 'required|string|max:255',
+        ]);
+
+        tipoalerta::create($request->only('descripcion'));
+
+        return redirect()->route('tipoalerta.index')->with('success', 'Tipo de alerta creado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(tipoalerta $tipoalerta)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(tipoalerta $tipoalerta)
     {
-        //
+        return Inertia::render('Alertas/Edit', ['alerta' => $tipoalerta]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, tipoalerta $tipoalerta)
     {
-        //
+        $request->validate([
+            'descripcion' => 'required|string|max:255',
+        ]);
+
+        $tipoalerta->update($request->only('descripcion'));
+
+        return redirect()->route('tipoalerta.index')->with('success', 'Tipo de alerta actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(tipoalerta $tipoalerta)
     {
-        //
+        $tipoalerta->delete();
+
+        return redirect()->route('tipoalerta.index')->with('success', 'Tipo de alerta eliminado con éxito.');
     }
 }
