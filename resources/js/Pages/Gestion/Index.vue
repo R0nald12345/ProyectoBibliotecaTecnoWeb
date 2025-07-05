@@ -38,12 +38,14 @@ function deleteGestion(id) {
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Nombre</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Estado</th>
                         <th class="px-6 py-3 text-right text-sm font-semibold text-gray-700">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     <tr v-for="g in gestiones" :key="g.id">
                         <td class="px-6 py-4 text-gray-800">{{ g.nombre }}</td>
+                        <td class="px-6 py-4 text-gray-800">{{ g.estado }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
                             <Link :href="route('gestion.edit', g.id)"
                                 class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded shadow">

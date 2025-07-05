@@ -45,7 +45,10 @@ class EntradaController extends Controller
     {
         $usuarios = User::select('id', 'name')->get();
         $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
-        $gestiones = Gestion::select('id', 'nombre')->get(); // ✅ nuevo
+
+        $gestiones = Gestion::select('id', 'nombre')
+            ->where('estado', 'activo')
+            ->get();
 
         $fecha = now()->format('Y-m-d');
         $hora = now()->format('H:i');
@@ -53,11 +56,12 @@ class EntradaController extends Controller
         return Inertia::render('Entrada/Create', [
             'usuarios' => $usuarios,
             'tipos_alerta' => $tiposAlerta,
-            'gestiones' => $gestiones, // ✅ enviar a la vista
+            'gestiones' => $gestiones,
             'fecha_actual' => $fecha,
             'hora_actual' => $hora,
         ]);
     }
+
 
     /**
      * Store a newly created resource in storage.

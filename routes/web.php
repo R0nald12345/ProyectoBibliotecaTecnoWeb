@@ -73,8 +73,7 @@ Route::middleware([
     Route::post('/asistencia', [AsistenciaController::class, 'registrar'])->name('asistencia.registrar');
     Route::get('/scrap-estudiante', [ScraperController::class, 'scrape'])->name('scraper.scrape');
 
-
-
+    Route::post('/storeentrada', [AsistenciaController::class, 'storeentrada'])->name('asistencia.storeentrada');
 
     // Rutas para la gestión de permisos
     Route::get('/permisos', function () {
@@ -85,7 +84,4 @@ Route::middleware([
     Route::get('/asistencias', function () {
         return Inertia::render('Asistencia/Index');
     })->name('asistencias.dashboard');
-
-
 });
-

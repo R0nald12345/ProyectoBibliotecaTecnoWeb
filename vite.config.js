@@ -17,5 +17,4 @@ export default defineConfig({
             },
         }),
     ],
-    // base: '/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public',
 });
