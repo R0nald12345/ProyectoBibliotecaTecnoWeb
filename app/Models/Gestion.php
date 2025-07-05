@@ -10,6 +10,6 @@ class Gestion extends Model
 
     protected $fillable = [
         'nombre',
-        'estado'
+        'estado',
     ];
 }

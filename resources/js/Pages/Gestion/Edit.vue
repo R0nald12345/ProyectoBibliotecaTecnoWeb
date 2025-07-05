@@ -7,7 +7,8 @@ defineOptions({ layout: AppLayout })
 const props = defineProps({ gestion: Object })
 
 const form = useForm({
-  nombre: props.gestion.nombre
+  nombre: props.gestion.nombre,
+  estado: props.gestion.estado // 👈 importante
 })
 
 function submit() {
@@ -20,6 +21,7 @@ function submit() {
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Editar Gestión</h1>
 
     <form @submit.prevent="submit" class="space-y-6">
+      <!-- Campo Nombre -->
       <div>
         <label
           for="nombre"
@@ -36,6 +38,28 @@ function submit() {
         />
         <p v-if="form.errors.nombre" class="mt-1 text-sm text-red-600">
           {{ form.errors.nombre }}
+        </p>
+      </div>
+
+      <!-- Campo Estado -->
+      <div>
+        <label
+          for="estado"
+          class="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Estado
+        </label>
+        <select
+          id="estado"
+          v-model="form.estado"
+          class="block w-full border border-gray-300 rounded-md px-4 py-2 focus:ring focus:ring-green-200 focus:outline-none"
+        >
+          <option value="" disabled>Seleccione un estado</option>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+        <p v-if="form.errors.estado" class="mt-1 text-sm text-red-600">
+          {{ form.errors.estado }}
         </p>
       </div>
 
