@@ -347,7 +347,7 @@ const extraerDatosEstudiante = async (url) => {
     try {
         cargandoDatos.value = true;
 
-        const response = await fetch(`/inf513/grupo10sa/proyecto2.1/ProyectoBibliotecaTecnoWeb/public/scrap-estudiante?url=${url}`, {
+        const response = await fetch(`/scrap-estudiante?url=${url}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
