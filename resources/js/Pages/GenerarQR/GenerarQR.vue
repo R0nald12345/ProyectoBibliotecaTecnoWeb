@@ -58,6 +58,7 @@ const downloadQR = () => {
 const marcarAsistencia = async () => {
   try {
     const res = await axios.get(`/qr/${user.qr_token}`)
+    console.log(res.data)
     mensaje.value = 'Asistencia registrada exitosamente.'
   } catch (e) {
     mensaje.value = 'Error al registrar la asistencia.'
