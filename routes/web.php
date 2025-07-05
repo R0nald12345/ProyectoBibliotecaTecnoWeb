@@ -12,6 +12,7 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalidaController;
+use App\Http\Controllers\QrController;
 // use App\Http\Controllers\RoleController; // Removed to avoid class name conflict
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -52,8 +53,8 @@ Route::resource('gestion', GestionController::class);
 Route::resource('roles', RoleController::class);
 Route::resource('usuarios', UsuarioController::class);
 
-
-
+Route::get('/qr/{token}', [QRController::class, 'registrarEntrada'])->name('qr.registrar');
+Route::get('/mi-qr', [QRController::class, 'mostrarQR'])->middleware('auth')->name('qr.mostrar');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
