@@ -24,13 +24,14 @@ class GestionController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'estado' => 'required|string|max:255',
+            'estado' => 'required|in:activo,inactivo',
         ]);
 
         Gestion::create($request->all());
 
         return redirect()->route('gestion.index')->with('success', 'Gestión creada correctamente.');
     }
+
 
     public function edit(Gestion $gestion)
     {
@@ -41,6 +42,7 @@ class GestionController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
+            'estado' => 'required|string|max:15',
         ]);
 
         $gestion->update($request->all());
@@ -51,7 +53,7 @@ class GestionController extends Controller
     public function destroy(Gestion $gestion)
     {
         $gestion->delete();
-
         return redirect()->route('gestion.index')->with('success', 'Gestión eliminada con éxito');
     }
+
 }
