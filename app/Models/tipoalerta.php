@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class tipoalerta extends Model
+class TipoAlerta extends Model
 {
-    protected $table = 'tipoalerta';
+    protected $table = 'tipoalerta'; // si tu tabla se llama así
 
     protected $fillable = [
-       'descripcion'
+        'descripcion',
     ];
 }

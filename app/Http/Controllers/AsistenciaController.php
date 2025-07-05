@@ -22,44 +22,26 @@ class AsistenciaController extends Controller
         return Inertia::render('Asistencia/Scan2');
     }
 
-    public function registrar(Request $request)
+    public function storeentrada(Request $request)
     {
-        $codigo = $request->codigo;
-
-        // Buscar usuario por ID (usando el código como ID)
-        $user = User::find($codigo);
-        dd($user,$request->all());
-        if (!$user) {
-            return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
-        }
-
-
-        // Asignar rol estudiante si no lo tiene
-        if (!$user->hasRole('estudiante')) {
-            $user->assignRole('estudiante');
-        }
-
-        $hoy = Carbon::today();
-
-        // Verificar si ya registró entrada hoy
-        $existeHoy = Entrada::where('user_id', $user->id)
-            ->whereDate('fecha', $hoy)
-            ->exists();
-
-        if ($existeHoy) {
-            return response()->json(['status' => 'info', 'message' => 'Ya registró asistencia hoy']);
-        }
-
-        // Registrar nueva entrada
-        entrada::create([
-            'descripcion' => 'Entrada por código QR',
-            'fecha' => $hoy,
-            'hora' => Carbon::now()->toTimeString(),
-            'user_id' => $user->id,
-            'gestion_id' => $request->gestion_id,      // debe enviarse desde el frontend
-            'tipoalerta_id' => $request->tipoalerta_id, // también desde el frontend
+        $request->validate([
+            'descripcion' => 'required|string|max:255',
+            'fecha' => 'required|date',
+            'hora' => 'required',
+            'user_id' => 'required|exists:users,id',
+            'tipoalerta_id' => 'required|exists:tipoalerta,id', // 👈 corregido también
+            'gestion_id' => 'required|exists:gestion,id',
         ]);
 
-        return response()->json(['status' => 'success', 'message' => 'Asistencia registrada']);
+        Entrada::create([
+            'descripcion' => $request->input('descripcion'),
+            'fecha' => $request->input('fecha'),
+            'hora' => $request->input('hora'),
+            'user_id' => $request->input('user_id'),
+            'tipoalerta_id' => $request->input('tipoalerta_id'),
+            'gestion_id' => $request->input('gestion_id'),
+        ]);
+
+        return redirect()->route('entrada.index')->with('success', 'Asistencia Entrada registrada correctamente');
     }
 }
