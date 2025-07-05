@@ -24,6 +24,7 @@ class GestionController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
+            'estado' => 'required|string|max:255',
         ]);
 
         Gestion::create($request->all());

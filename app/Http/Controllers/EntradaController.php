@@ -76,13 +76,11 @@ class EntradaController extends Controller
             ], 404);
         }
 
-        // Asignar rol si no lo tiene
-        if (!$user->hasRole('estudiante')) {
-            $user->assignRole('estudiante');
-        }
-
+        // // Asignar rol si no lo tiene
+        // if (!$user->hasRole('estudiante')) {
+        //     $user->assignRole('estudiante');
+        // }
         $hoy = Carbon::today();
-
 
         Entrada::create([
             'descripcion' => 'Entrada por código QR',

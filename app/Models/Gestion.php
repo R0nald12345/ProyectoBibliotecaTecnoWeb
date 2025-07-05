@@ -9,6 +9,7 @@ class Gestion extends Model
     protected $table = 'gestion'; // 👈 importante
 
     protected $fillable = [
-        'nombre'
+        'nombre',
+        'estado'
     ];
 }
