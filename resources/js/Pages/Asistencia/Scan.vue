@@ -2,14 +2,12 @@
     <div class="min-h-screen p-6" style="background-color: var(--bg-body); color: var(--text-color)">
 
 
-         <!-- Botón Atrás -->
-         <div class="mb-4">
-            <button
-                @click="goBack"
-                class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-            >
+        <!-- Botón Atrás -->
+        <div class="mb-4">
+            <button @click="goBack"
+                class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 Atrás
             </button>
@@ -105,7 +103,7 @@
                             class="absolute top-4 right-4 flex items-center space-x-2 bg-black bg-opacity-50 rounded-full px-3 py-1">
                             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             <span class="text-white text-sm font-medium">{{ camaraActiva ? 'Escaneando...' : 'Inactivo'
-                            }}</span>
+                                }}</span>
                         </div>
                     </div>
                 </div>
@@ -151,6 +149,7 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { BrowserQRCodeReader } from '@zxing/browser'
 import axios from 'axios'
@@ -159,11 +158,11 @@ import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
 import TarjetaExterno from '@/Components/TarjetaExterno.vue'
 import { useSound } from '@/composables/useSound'
 
-
-const { 
-    mostrarAlertaEntradaExitosa, 
-    puedeMarcarAsistencia 
+const {
+    mostrarAlertaEntradaExitosa,
+    puedeMarcarAsistencia
 } = useSound()
+
 const iframeUrl = ref(null)
 const mensaje = ref(null)
 const mensajeEstilo = ref('bg-blue-100 text-blue-800')
@@ -174,8 +173,50 @@ const estudianteData = ref(null)
 const cargandoDatos = ref(false)
 const role = ref('estudiante') // Asignar el rol de estudiante por defecto
 
+// ✅ Variables para el sistema de cooldown
+const puedeEscanear = ref(true) // Controla si se puede escanear
+const tiempoEspera = 5000 // 5 segundos en milisegundos
+const contadorCooldown = ref(0) // Para mostrar contador visual
+let intervaloCooldown = null // Para limpiar el intervalo
+
 let codeReader = null
 let controlIntervalId = null
+let autoFlipIntervalId = null
+
+// ✅ Función para mostrar countdown visual
+const iniciarContadorVisual = () => {
+    contadorCooldown.value = 5
+
+    if (intervaloCooldown) {
+        clearInterval(intervaloCooldown)
+    }
+
+    intervaloCooldown = setInterval(() => {
+        contadorCooldown.value--
+
+        if (contadorCooldown.value <= 0) {
+            clearInterval(intervaloCooldown)
+            intervaloCooldown = null
+        }
+    }, 1000)
+}
+
+// ✅ Función para bloquear escaneo temporalmente
+const bloquearEscaneoTemporal = () => {
+    puedeEscanear.value = false
+    iniciarContadorVisual()
+
+    // Mostrar mensaje de cooldown
+    mensaje.value = `QR procesado. Espera ${tiempoEspera / 1000} segundos para escanear otro...`
+    mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
+
+    setTimeout(() => {
+        puedeEscanear.value = true
+        contadorCooldown.value = 0
+        mensaje.value = 'Listo para escanear nuevamente'
+        mensajeEstilo.value = 'bg-green-100 text-green-800'
+    }, tiempoEspera)
+}
 
 // Función para alternar la animación flip de la tarjeta
 const toggleFlip = () => {
@@ -183,25 +224,23 @@ const toggleFlip = () => {
 }
 
 function goBack() {
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard'
 }
-
-// Función para alternar la animación flip de la tarjeta
 
 // Función para extraer los datos del estudiante desde la URL
 const extraerDatosEstudiante = async (url) => {
     try {
         if (url.includes('/qr/')) {
-            role.value = 'externo';
+            role.value = 'externo'
         }
-        
-        cargandoDatos.value = true;
-        
+
+        cargandoDatos.value = true
+
         if (role.value === 'estudiante') {
             // Verificar si puede marcar asistencia antes de proceder
             if (!puedeMarcarAsistencia()) {
-                cargandoDatos.value = false;
-                return;
+                cargandoDatos.value = false
+                return
             }
 
             const response = await fetch(`/scrap-estudiante?url=${url}`, {
@@ -209,25 +248,25 @@ const extraerDatosEstudiante = async (url) => {
                 headers: {
                     'Content-Type': 'application/json',
                 }
-            });
-            
+            })
+
             if (!response.ok) {
-                throw new Error('Error al hacer scraping en el servidor');
+                throw new Error('Error al hacer scraping en el servidor')
             }
-            
-            const data = await response.json();
-            estudianteData.value = data;
-            const esValido = data && Object.keys(data).length > 0 && !data.error;
-            estudianteData.value = esValido ? data : {};
-            
+
+            const data = await response.json()
+            estudianteData.value = data
+            const esValido = data && Object.keys(data).length > 0 && !data.error
+            estudianteData.value = esValido ? data : {}
+
             if (!esValido) {
-                mensaje.value = 'Documento no válido';
-                mensajeEstilo.value = 'bg-red-100 text-red-800';
-                return; // Salir temprano si no es válido
+                mensaje.value = 'Documento no válido'
+                mensajeEstilo.value = 'bg-red-100 text-red-800'
+                return // Salir temprano si no es válido
             }
-            
-            console.log(data);
-            
+
+            console.log(data)
+
             // Registrar entrada automáticamente
             const entradaData = {
                 descripcion: 'Estudiante aceptado',
@@ -235,71 +274,72 @@ const extraerDatosEstudiante = async (url) => {
                 hora: new Date().toTimeString().split(' ')[0],
                 user_id: parseInt(data.REGISTRO),
                 tipoalerta_id: 1,
-            };
-            
+            }
+
             axios.post(route('entrada.store'), entradaData)
                 .then(res => {
-                    mensaje.value = res.data.message;
-                    mensajeEstilo.value = 'bg-green-100 text-green-800';
-                    
+                    mensaje.value = res.data.message
+                    mensajeEstilo.value = 'bg-green-100 text-green-800'
+
                     // Mostrar alert de entrada exitosa
-                    mostrarAlertaEntradaExitosa();
+                    mostrarAlertaEntradaExitosa()
                 })
                 .catch(err => {
-                    mensaje.value = err.response?.data?.message || 'Error al registrar entrada';
-                    mensajeEstilo.value = 'bg-red-100 text-red-800';
+                    mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
+                    mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
                 .finally(() => {
-                    cargandoDatos.value = false;
-                });
+                    cargandoDatos.value = false
+                })
         } else {
             // Usuario externo - también verificar antes de proceder
             if (!puedeMarcarAsistencia()) {
-                cargandoDatos.value = false;
-                return;
+                cargandoDatos.value = false
+                return
             }
 
             // Extraer token de la URL
-            const urlParts = url.split('/');
-            const token = urlParts[urlParts.length - 1];
-            
+            const urlParts = url.split('/')
+            const token = urlParts[urlParts.length - 1]
+
             // Obtener datos del usuario usando la nueva ruta
-            const userResponse = await axios.get(`/qr/${token}`);
-            console.log('Datos del usuario:', userResponse.data);
-            
+            const userResponse = await axios.get(`/qr/${token}`)
+            console.log('Datos del usuario:', userResponse.data)
+
             if (!userResponse.data.success) {
-                throw new Error('Error al obtener datos del usuario');
+                throw new Error('Error al obtener datos del usuario')
             }
-            
-            estudianteData.value = userResponse.data.user;
-            console.log('Role:', role.value);
-            
+
+            estudianteData.value = userResponse.data.user
+            console.log('Role:', role.value)
+
             // Registrar entrada usando la nueva ruta
             const entradaResponse = await axios.post('/qr/entrada', {
                 user_id: userResponse.data.user.id,
                 tipo: 'entrada',
                 descripcion: 'Entrada vía QR - Usuario externo'
-            });
-            
+            })
+
             if (entradaResponse.data.success) {
                 // Mostrar SweetAlert para usuario externo
-                mostrarAlertaEntradaExitosa();
-                
-                mensaje.value = entradaResponse.data.mensaje;
-                mensajeEstilo.value = 'bg-green-100 text-green-800';
+                mostrarAlertaEntradaExitosa()
+
+                mensaje.value = entradaResponse.data.mensaje
+                mensajeEstilo.value = 'bg-green-100 text-green-800'
             } else {
-                throw new Error('Error al registrar entrada');
+                throw new Error('Error al registrar entrada')
             }
         }
     } catch (error) {
-        console.error('Error al extraer datos:', error);
-        mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`;
-        mensajeEstilo.value = 'bg-red-100 text-red-800';
+        console.error('Error al extraer datos:', error)
+        mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`
+        mensajeEstilo.value = 'bg-red-100 text-red-800'
     } finally {
-        cargandoDatos.value = false;
+        cargandoDatos.value = false
     }
-};
-// Función para iniciar el escáner
+}
+
+// ✅ Función para iniciar el escáner CON COOLDOWN
 const iniciarEscaner = async () => {
     try {
         mensaje.value = 'Inicializando cámara con zoom 200%...'
@@ -325,12 +365,12 @@ const iniciarEscaner = async () => {
             }
         }
 
-        // Iniciar el escáner con las restricciones definidas
+        // ✅ Iniciar el escáner con COOLDOWN
         await codeReader.decodeFromConstraints(
             constraints,
             previewElem,
             (result, err) => {
-                if (result) {
+                if (result && puedeEscanear.value) { // ✅ Verificar si puede escanear
                     const textoQR = result.getText()
 
                     try {
@@ -339,13 +379,21 @@ const iniciarEscaner = async () => {
                         mensaje.value = 'QR leído correctamente. Extrayendo datos...'
                         mensajeEstilo.value = 'bg-blue-100 text-blue-800'
 
+                        // ✅ Bloquear escaneo inmediatamente
+                        bloquearEscaneoTemporal()
+
                         // Extraer los datos del estudiante a partir de la URL
                         extraerDatosEstudiante(url.href)
 
                     } catch {
                         mensaje.value = 'El contenido del QR no es una URL válida: ' + textoQR
                         mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
+                        // ✅ También bloquear en caso de error
+                        bloquearEscaneoTemporal()
                     }
+                } else if (result && !puedeEscanear.value) {
+                    // ✅ QR detectado pero en cooldown
+                    console.log('QR detectado pero en período de cooldown')
                 }
 
                 if (err && !(err instanceof TypeError)) {
@@ -455,6 +503,12 @@ onBeforeUnmount(() => {
     if (autoFlipIntervalId) {
         clearInterval(autoFlipIntervalId)
         autoFlipIntervalId = null
+    }
+
+    // ✅ Limpiar intervalo de cooldown
+    if (intervaloCooldown) {
+        clearInterval(intervaloCooldown)
+        intervaloCooldown = null
     }
 })
 </script>
