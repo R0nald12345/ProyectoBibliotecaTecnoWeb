@@ -253,7 +253,7 @@ const crearGraficoUsuariosPorRol = () => {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Usuarios por Rol que Asistieron Hoy'
+                    text: 'Usuarios por Rol'
                 },
                 legend: {
                     position: 'bottom'

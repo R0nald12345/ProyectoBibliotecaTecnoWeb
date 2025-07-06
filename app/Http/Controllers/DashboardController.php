@@ -32,9 +32,12 @@ class DashboardController extends Controller
             ->map(fn($group) => $group->count());
 
 
-        $usuariosPorRol = Role::all()->mapWithKeys(fn($rol) => [
-            $rol->name => $rol->users->count()
-        ]);
+        $usuariosPorRol = Role::all()
+            ->filter(fn($rol) => $rol->name !== 'admin')
+            ->mapWithKeys(fn($rol) => [
+                $rol->name => $rol->users->count()
+            ]);
+
 
         return Inertia::render('Dashboard', [
             'estadisticas' => [
