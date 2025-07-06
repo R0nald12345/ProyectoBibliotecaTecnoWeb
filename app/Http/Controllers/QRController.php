@@ -37,7 +37,7 @@ class QRController extends Controller
                 'mensaje' => 'Datos obtenidos correctamente.',
                 'user' => $userData
             ]);
-        
+
 
     }
 
@@ -85,7 +85,7 @@ class QRController extends Controller
             'fecha' => now()->toDateString(),
             'hora' => now()->toTimeString(),
             'user_id' => $request->user_id,
-            'tipoalerta_id' => 1, 
+            'tipoalerta_id' => 1,
             'gestion_id' => 1,
         ]);
 

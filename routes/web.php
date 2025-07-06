@@ -11,7 +11,7 @@ use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\GestionController;
 use App\Http\Controllers\HolaMundoController;
 use App\Http\Controllers\PermisoController;
-use App\Http\Controllers\QrController;
+use App\Http\Controllers\QRController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SalidaController;
@@ -58,7 +58,7 @@ Route::resource('usuarios', UsuarioController::class);
 // ---------------------
 // Rutas de QR
 // ---------------------
-Route::get('/qr/{token}', [QrController::class, 'obtenerDatosUsuario']);
+Route::get('/qr/{token}', [QRController::class, 'obtenerDatosUsuario']);
 Route::get('/mi-qr', [QrController::class, 'mostrarQR'])->middleware('auth')->name('qr.mostrar');
 Route::post('/qr/entrada', [QrController::class, 'registrarEntrada']);
 Route::post('/qr/salida', [QrController::class, 'registrarSalida']);
