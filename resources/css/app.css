@@ -2,43 +2,199 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --font-size: 16px;
-    --color-bg: #fff;
-    --color-text: #222;
-    --color-primary: #4f46e5;
-    /* ...otros colores base... */
-  }
-  
-  /* Tema Niños */
-  .theme-kids {
-    --color-bg: #ffe4e1;
-    --color-primary: #ff69b4;
-    --font-size: 18px;
-  }
-  
-  /* Tema Jóvenes */
-  .theme-young {
-    --color-bg: #e0f7fa;
-    --color-primary: #00bcd4;
-    --font-size: 16px;
-  }
-  
-  /* Tema Adultos */
-  .theme-adult {
-    --color-bg: #f5f5f5;
-    --color-primary: #607d8b;
-    --font-size: 17px;
-  }
-  
-  /* Modo Noche */
-  .theme-night {
-    --color-bg: #222;
-    --color-text: #fff;
-  }
-  
-  /* Accesibilidad: Alto Contraste */
-  .theme-contrast {
-    --color-bg: #000;
-    --color-text: #ff0;
-  }
+:root.theme-light {
+    --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bg-secondary: rgba(255, 255, 255, 0.95);
+    --bg-main: rgba(255, 255, 255, 0.7);
+    --sidebar-bg: linear-gradient(180deg, #4f46e5 0%, #3730a3 100%);
+    --sidebar-border: rgba(79, 70, 229, 0.2);
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-sidebar: #ffffff;
+    --nav-hover: rgba(255, 255, 255, 0.1);
+    --nav-active: rgba(255, 255, 255, 0.2);
+    --theme-selector: rgba(255, 255, 255, 0.1);
+    --theme-dropdown: rgba(255, 255, 255, 0.95);
+    --theme-option: rgba(79, 70, 229, 0.1);
+    --theme-option-active: rgba(79, 70, 229, 0.2);
+    --border-color: rgba(229, 231, 235, 0.5);
+}
+
+/* Variables CSS para Tema Oscuro */
+:root.theme-dark {
+    --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --bg-secondary: rgba(31, 41, 55, 0.95);
+    --bg-main: rgba(17, 24, 39, 0.8);
+    --sidebar-bg: linear-gradient(180deg, #111827 0%, #030712 100%);
+    --sidebar-border: rgba(75, 85, 99, 0.2);
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-sidebar: #f9fafb;
+    --nav-hover: rgba(75, 85, 99, 0.3);
+    --nav-active: rgba(79, 70, 229, 0.3);
+    --theme-selector: rgba(75, 85, 99, 0.2);
+    --theme-dropdown: rgba(31, 41, 55, 0.95);
+    --theme-option: rgba(75, 85, 99, 0.1);
+    --theme-option-active: rgba(79, 70, 229, 0.2);
+    --border-color: rgba(75, 85, 99, 0.3);
+}
+
+/* Variables CSS para Tema Niños */
+:root.theme-kids {
+    --bg-primary: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+    --bg-secondary: rgba(255, 255, 255, 0.95);
+    --bg-main: rgba(255, 250, 240, 0.8);
+    --sidebar-bg: linear-gradient(180deg, #ff6b6b 0%, #4ecdc4 100%);
+    --sidebar-border: rgba(255, 107, 107, 0.2);
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-sidebar: #ffffff;
+    --nav-hover: rgba(255, 255, 255, 0.2);
+    --nav-active: rgba(255, 255, 255, 0.3);
+    --theme-selector: rgba(255, 255, 255, 0.2);
+    --theme-dropdown: rgba(255, 255, 255, 0.95);
+    --theme-option: rgba(255, 107, 107, 0.1);
+    --theme-option-active: rgba(255, 107, 107, 0.2);
+    --border-color: rgba(255, 192, 203, 0.5);
+}
+
+/* Aplicar variables CSS */
+.theme-container {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.sidebar {
+    background: var(--sidebar-bg);
+    color: var(--text-sidebar);
+}
+
+.sidebar-footer {
+    border-color: var(--sidebar-border);
+}
+
+.theme-selector-button {
+    background: var(--theme-selector);
+    border: 1px solid var(--sidebar-border);
+}
+
+.theme-selector-button:hover {
+    background: var(--nav-hover);
+}
+
+.theme-dropdown {
+    background: var(--theme-dropdown);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+
+.theme-option {
+    color: var(--text-primary);
+}
+
+.theme-option:hover {
+    background: var(--theme-option);
+}
+
+.theme-option-active {
+    background: var(--theme-option-active);
+}
+
+.nav-link {
+    color: var(--text-sidebar);
+}
+
+.nav-link:hover {
+    background: var(--nav-hover);
+}
+
+.nav-link-active {
+    background: var(--nav-active);
+    font-weight: 600;
+}
+
+.top-nav {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+.nav-toggle {
+    color: var(--text-primary);
+}
+
+.user-name {
+    color: var(--text-primary);
+}
+
+.profile-button {
+    color: var(--text-primary);
+}
+
+.profile-button:hover {
+    background: var(--theme-option);
+}
+
+.main-content {
+    background: var(--bg-main);
+}
+
+/* Efectos especiales para tema niños */
+:root.theme-kids .sidebar {
+    position: relative;
+}
+
+:root.theme-kids .sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px, 60px 60px, 30px 30px;
+    pointer-events: none;
+}
+
+:root.theme-kids .nav-link {
+    position: relative;
+    overflow: hidden;
+}
+
+:root.theme-kids .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+:root.theme-kids .nav-link:hover::before {
+    left: 100%;
+}
+
+/* Transiciones suaves */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Click fuera para cerrar dropdown */
+.theme-dropdown {
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

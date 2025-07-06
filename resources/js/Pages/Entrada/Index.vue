@@ -130,18 +130,22 @@ const mostrarPaginacion = computed(() =>
 <template>
     <div>
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Entradas</h1>
+            <h1 class="text-3xl font-bold" style="color: var(--text-color)">Entradas</h1>
             <Link :href="route('entrada.create')"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow">
-                + Nueva entrada
+            + Nueva entrada
             </Link>
         </div>
 
-        <div v-if="message" class="mb-4 p-4 rounded bg-green-100 text-green-800 border border-green-300 shadow">
+        <div v-if="message" class="mb-4 p-4 rounded border shadow"
+            style="background-color: var(--success-bg); color: var(--success-text); border-color: var(--success-border)">
+
             {{ message }}
         </div>
 
-        <div class="overflow-x-auto bg-white shadow rounded-lg">
+        <div class="overflow-x-auto shadow rounded-lg"
+            style="background-color: var(--bg-color); color: var(--text-color)">
+
             <div class="mb-4">
                 <input v-model="search" type="text" placeholder="Buscar entrada..."
                     class="w-full sm:w-1/3 px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring focus:ring-blue-200" />
@@ -168,7 +172,8 @@ const mostrarPaginacion = computed(() =>
             </div>
 
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead style="background-color: var(--bg-secondary)">
+
                     <tr>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Descripción</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Fecha</th>
@@ -181,12 +186,18 @@ const mostrarPaginacion = computed(() =>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     <tr v-for="e in filteredEntradas" :key="e.id">
-                        <td class="px-6 py-4 text-gray-800">{{ e.descripcion }}</td>
-                        <td class="px-6 py-4 text-gray-800">{{ e.fecha }}</td>
-                        <td class="px-6 py-4 text-gray-800">{{ e.hora }}</td>
-                        <td class="px-6 py-4 text-gray-800">{{ e.user?.name || '—' }}</td>
-                        <td class="px-6 py-4 text-gray-800">{{ e.gestion?.nombre || '—' }}</td>
-                        <td class="px-6 py-4 text-gray-800">{{ e.tipoalerta?.descripcion || '—' }}</td>
+                        <td class="px-6 py-4" style="color: var(--text-color)">
+                            {{ e.descripcion }}</td>
+                        <td class="px-6 py-4" style="color: var(--text-color)">
+                            {{ e.fecha }}</td>
+                        <td class="px-6 py-4" style="color: var(--text-color)">
+                            {{ e.hora }}</td>
+                        <td class="px-6 py-4" style="color: var(--text-color)">
+                            {{ e.user?.name || '—' }}</td>
+                        <td class="px-6 py-4" style="color: var(--text-color)">
+                            {{ e.gestion?.nombre || '—' }}</td>
+                        <td class="px-6 py-4" style="color: var(--text-color)">
+                            {{ e.tipoalerta?.descripcion || '—' }}</td>
                         <td class="px-6 py-4 text-right space-x-2">
                             <form @submit.prevent="deleteEntrada(e.id)" class="inline">
                                 <button type="submit"
@@ -199,7 +210,7 @@ const mostrarPaginacion = computed(() =>
                 </tbody>
             </table>
 
-            <div v-if="filteredEntradas.length === 0" class="text-center text-gray-500 py-4">
+<div v-if="filteredEntradas.length === 0" class="text-center py-4" style="color: var(--text-muted)">
                 No se encontraron entradas.
             </div>
 
@@ -215,7 +226,7 @@ const mostrarPaginacion = computed(() =>
             </div>
         </div>
 
-        <div class="mt-10 bg-white p-4 rounded shadow w-full h-[400px]">
+<div class="mt-10 p-4 rounded shadow w-full h-[400px]" style="background-color: var(--bg-color); color: var(--text-color)">
             <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
             <canvas ref="canvasRef" class="w-full h-full"></canvas>
         </div>
