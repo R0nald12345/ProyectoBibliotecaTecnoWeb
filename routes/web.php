@@ -76,6 +76,7 @@ Route::middleware([
     Route::get('/scrap-estudiante', [ScraperController::class, 'scrape'])->name('scraper.scrape');
 
     Route::post('/storeentrada', [AsistenciaController::class, 'storeentrada'])->name('asistencia.storeentrada');
+    Route::post('/storesalida', [AsistenciaController::class, 'storesalida'])->name('asistencia.storesalida');
 
     // Rutas para la gestión de permisos
     Route::get('/permisos', function () {
