@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -59,6 +59,46 @@ const hasRole = (roleName) => {
     return Array.isArray(user?.roles) && user.roles.some(r => r.name === roleName);
 };
 
+const searchQuery = ref('');
+const searchResults = ref([]);
+const searchActive = ref(false);
+
+// Solo mostrar el buscador si es admin o administrativo
+const canSearchSidebar = computed(() => hasRole('admin') || hasRole('administrativo'));
+
+// Filtrar los ítems del sidebar según el texto
+function updateSearchResults() {
+    if (!searchQuery.value.trim()) {
+        searchResults.value = [];
+        return;
+    }
+    // Busca por inicial o coincidencia en el nombre
+    searchResults.value = sidebarItems.value.filter(item =>
+        item.nombre.toLowerCase().startsWith(searchQuery.value.toLowerCase())
+    );
+    searchActive.value = searchResults.value.length > 0;
+}
+
+// Navegar al hacer click en un resultado
+function goToSidebarItem(item) {
+    searchQuery.value = '';
+    searchResults.value = [];
+    searchActive.value = false;
+    router.visit(item.ruta);
+}
+
+// Los ítems del sidebar (puedes adaptar esto si usas menuItems dinámico)
+const sidebarItems = ref([
+    { nombre: 'Dashboard', ruta: route('dashboard') },
+    { nombre: 'Mi QR', ruta: route('qr.mostrar') },
+    { nombre: 'Gestiones', ruta: route('gestion.index') },
+    { nombre: 'Usuarios', ruta: route('usuarios.index') },
+    { nombre: 'Asistencia E', ruta: route('asistencia.index') },
+    { nombre: 'Asistencia S', ruta: route('asistencia.index2') },
+    { nombre: 'Roles', ruta: route('roles.index') },
+    { nombre: 'Asistencia Entrada', ruta: route('entrada.index') },
+    { nombre: 'Asistencia Salida', ruta: route('salida.index') },
+]);
 
 </script>
 
@@ -338,7 +378,7 @@ const hasRole = (roleName) => {
             </aside>
 
 
-            <!-- Main content -->
+            <!-- Main content HEADER -->
             <div class="flex-1 flex flex-col">
                 <!-- Top nav -->
                 <nav class="top-nav backdrop-blur border-b px-6 py-3 flex items-center justify-between shadow-sm">
@@ -350,26 +390,58 @@ const hasRole = (roleName) => {
                             </svg>
                         </button>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm font-medium user-name">{{ $page.props.auth.user.name }}</span>
-                        <Dropdown align="right" width="48">
-                            <template #trigger>
-                                <button class="flex items-center gap-2 px-3 py-1 rounded transition profile-button">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
+
+                    <!-- Buscador INPUT-->
+                    <div class="flex items-center justify-between gap-4 w-full">
+
+                        <div class = "flex justify-center items-center">
+                            <span class="text-sm font-medium user-name">{{ $page.props.auth.user.name }}</span>
+                            <Dropdown align="right" width="48">
+                                <template #trigger>
+                                    <button class="flex items-center gap-2 px-3 py-1 rounded transition profile-button">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path
                                             d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                                    </svg>
-                                    Perfil
-                                </button>
-                            </template>
-                            <template #content>
-                                <DropdownLink :href="route('profile.show')">Perfil</DropdownLink>
-                                <form @submit.prevent="logout">
-                                    <DropdownLink as="button">Cerrar sesión</DropdownLink>
-                                </form>
-                            </template>
-                        </Dropdown>
+                                        </svg>
+                                        Perfil
+                                    </button>
+                                </template>
+                                <template #content>
+                                    <DropdownLink :href="route('profile.show')">Perfil</DropdownLink>
+                                    <form @submit.prevent="logout">
+                                        <DropdownLink as="button">Cerrar sesión</DropdownLink>
+                                    </form>
+                                </template>
+                            </Dropdown>
+
+                        </div>
+
+
+                        <div v-if="canSearchSidebar" class="relative">
+                            <input
+                                v-model="searchQuery"
+                                @input="updateSearchResults"
+                                @focus="updateSearchResults"
+                                @blur="() => setTimeout(() => searchActive.value = false, 200)"
+                                type="text"
+                                placeholder="Buscar menú..."
+                                class="px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring w-40"
+                            />
+                            <ul v-if="searchActive && searchResults.length" class="absolute left-0 mt-1 w-full bg-white text-black rounded shadow z-50">
+                                <li
+                                    v-for="item in searchResults"
+                                    :key="item.ruta"
+                                    @mousedown.prevent="goToSidebarItem(item)"
+                                    class="px-3 py-2 hover:bg-indigo-100 cursor-pointer"
+                                >
+                                    {{ item.nombre }}
+                                </li>
+                            </ul>
+                        </div>
+
                     </div>
+
+
                 </nav>
 
                 <!-- Page content -->

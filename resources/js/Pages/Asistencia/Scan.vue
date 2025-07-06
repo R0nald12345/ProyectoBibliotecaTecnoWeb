@@ -1,5 +1,20 @@
 <template>
     <div class="min-h-screen p-6" style="background-color: var(--bg-body); color: var(--text-color)">
+
+
+         <!-- Botón Atrás -->
+         <div class="mb-4">
+            <button
+                @click="goBack"
+                class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Atrás
+            </button>
+        </div>
+
         <!-- Header Profesional -->
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-800 to-red-600 bg-clip-text text-transparent mb-2">
@@ -110,7 +125,6 @@
                     }" @click="toggleFlip">
                         <TarjetaEstudiante v-if="role === 'estudiante'" :estudianteData="estudianteData"
                             :flipped="flipped" @toggleFlip="toggleFlip" />
-
                     </div>
 
 
@@ -144,6 +158,8 @@ import ModalCargando from '@/Components/ModalCargando.vue'
 import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
 import TarjetaExterno from '@/Components/TarjetaExterno.vue'
 import { useSound } from '@/composables/useSound'
+
+
 const { 
     mostrarAlertaEntradaExitosa, 
     puedeMarcarAsistencia 
@@ -166,6 +182,9 @@ const toggleFlip = () => {
     flipped.value = !flipped.value
 }
 
+function goBack() {
+    window.location.href = '/dashboard';
+}
 
 // Función para alternar la animación flip de la tarjeta
 
