@@ -149,6 +149,7 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { BrowserQRCodeReader } from '@zxing/browser'
 import axios from 'axios'
@@ -156,12 +157,24 @@ import ModalCargando from '@/Components/ModalCargando.vue'
 import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
 import TarjetaExterno from '@/Components/TarjetaExterno.vue'
 import { useSound } from '@/composables/useSound'
+import { useCooldown } from '@/composables/useCooldown'
 
-
-const { 
-    mostrarAlertaSalidaExitosa, 
-    puedeMarcarAsistencia 
+const {
+    mostrarAlertaSalidaExitosa,
+    puedeMarcarAsistencia
 } = useSound()
+
+// ✅ Usar el composable de cooldown
+const {
+    puedeEscanear,
+    contadorCooldown,
+    bloquearEscaneoTemporal,
+    resetearCooldown,
+    puedeEjecutar,
+    tiempoRestante,
+    limpiarTimers
+} = useCooldown(5000) // 5 segundos de cooldown
+
 const iframeUrl = ref(null)
 const mensaje = ref(null)
 const mensajeEstilo = ref('bg-blue-100 text-blue-800')
@@ -170,10 +183,23 @@ const camaras = ref([])
 const flipped = ref(false)
 const estudianteData = ref(null)
 const cargandoDatos = ref(false)
-const role = ref('estudiante') // Asignar el rol de estudiante por defecto
+const role = ref('estudiante')
 
 let codeReader = null
 let controlIntervalId = null
+let autoFlipIntervalId = null
+
+// ✅ Callbacks para el cooldown
+const onCooldownStart = (segundos) => {
+    mensaje.value = `QR procesado. Espera ${segundos} segundos para escanear otro...`
+    mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
+}
+
+const onCooldownEnd = () => {
+    mensaje.value = 'ACEPTADO'
+    mostrarAlertaSalidaExitosa()
+    mensajeEstilo.value = 'bg-green-100 text-green-800'
+}
 
 // Función para alternar la animación flip de la tarjeta
 const toggleFlip = () => {
@@ -181,25 +207,23 @@ const toggleFlip = () => {
 }
 
 function goBack() {
-    window.location.href = '/dashboard';
+    window.location.href = '/dashboard'
 }
-
-// Función para alternar la animación flip de la tarjeta
 
 // Función para extraer los datos del estudiante desde la URL
 const extraerDatosEstudiante = async (url) => {
     try {
         if (url.includes('/qr/')) {
-            role.value = 'externo';
+            role.value = 'externo'
         }
-        
-        cargandoDatos.value = true;
-        
+
+        cargandoDatos.value = true
+
         if (role.value === 'estudiante') {
             // Verificar si puede marcar asistencia antes de proceder
             if (!puedeMarcarAsistencia()) {
-                cargandoDatos.value = false;
-                return;
+                cargandoDatos.value = false
+                return
             }
 
             const response = await fetch(`/scrap-estudiante?url=${url}`, {
@@ -207,25 +231,25 @@ const extraerDatosEstudiante = async (url) => {
                 headers: {
                     'Content-Type': 'application/json',
                 }
-            });
-            
+            })
+
             if (!response.ok) {
-                throw new Error('Error al hacer scraping en el servidor');
+                throw new Error('Error al hacer scraping en el servidor')
             }
-            
-            const data = await response.json();
-            estudianteData.value = data;
-            const esValido = data && Object.keys(data).length > 0 && !data.error;
-            estudianteData.value = esValido ? data : {};
-            
+
+            const data = await response.json()
+            estudianteData.value = data
+            const esValido = data && Object.keys(data).length > 0 && !data.error
+            estudianteData.value = esValido ? data : {}
+
             if (!esValido) {
-                mensaje.value = 'Documento no válido';
-                mensajeEstilo.value = 'bg-red-100 text-red-800';
-                return; // Salir temprano si no es válido
+                mensaje.value = 'Documento no válido'
+                mensajeEstilo.value = 'bg-red-100 text-red-800'
+                return
             }
-            
-            console.log(data);
-            
+
+            console.log(data)
+
             // Registrar entrada automáticamente
             const entradaData = {
                 descripcion: 'Estudiante aceptado',
@@ -233,71 +257,72 @@ const extraerDatosEstudiante = async (url) => {
                 hora: new Date().toTimeString().split(' ')[0],
                 user_id: parseInt(data.REGISTRO),
                 tipoalerta_id: 1,
-            };
-            
-            axios.post(route('entrada.store'), entradaData)
+            }
+
+            axios.post(route('salida.store'), entradaData)
                 .then(res => {
-                    mensaje.value = res.data.message;
-                    mensajeEstilo.value = 'bg-green-100 text-green-800';
-                    
+                    mensaje.value = res.data.message
+                    mensajeEstilo.value = 'bg-green-100 text-green-800'
+
                     // Mostrar alert de entrada exitosa
-                    mostrarAlertaSalidaExitosa();
+                    mostrarAlertaSalidaExitosa()
                 })
                 .catch(err => {
-                    mensaje.value = err.response?.data?.message || 'Error al registrar entrada';
-                    mensajeEstilo.value = 'bg-red-100 text-red-800';
+                    mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
+                    mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
                 .finally(() => {
-                    cargandoDatos.value = false;
-                });
+                    cargandoDatos.value = false
+                })
         } else {
             // Usuario externo - también verificar antes de proceder
             if (!puedeMarcarAsistencia()) {
-                cargandoDatos.value = false;
-                return;
+                cargandoDatos.value = false
+                return
             }
 
             // Extraer token de la URL
-            const urlParts = url.split('/');
-            const token = urlParts[urlParts.length - 1];
-            
+            const urlParts = url.split('/')
+            const token = urlParts[urlParts.length - 1]
+
             // Obtener datos del usuario usando la nueva ruta
-            const userResponse = await axios.get(`/qr/${token}`);
-            console.log('Datos del usuario:', userResponse.data);
-            
+            const userResponse = await axios.get(`/qr/${token}`)
+            console.log('Datos del usuario:', userResponse.data)
+
             if (!userResponse.data.success) {
-                throw new Error('Error al obtener datos del usuario');
+                throw new Error('Error al obtener datos del usuario')
             }
-            
-            estudianteData.value = userResponse.data.user;
-            console.log('Role:', role.value);
-            
+
+            estudianteData.value = userResponse.data.user
+            console.log('Role:', role.value)
+
             // Registrar entrada usando la nueva ruta
             const entradaResponse = await axios.post('/qr/salida', {
                 user_id: userResponse.data.user.id,
                 tipo: 'salida',
                 descripcion: 'Salida vía QR - Usuario externo'
-            });
-            
+            })
+
             if (entradaResponse.data.success) {
                 // Mostrar SweetAlert para usuario externo
-                mostrarAlertaSalidaExitosa();
-                
-                mensaje.value = entradaResponse.data.mensaje;
-                mensajeEstilo.value = 'bg-green-100 text-green-800';
+                mostrarAlertaSalidaExitosa()
+
+                mensaje.value = entradaResponse.data.mensaje
+                mensajeEstilo.value = 'bg-green-100 text-green-800'
             } else {
-                throw new Error('Error al registrar entrada');
+                throw new Error('Error al registrar la salida')
             }
         }
     } catch (error) {
-        console.error('Error al extraer datos:', error);
-        mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`;
-        mensajeEstilo.value = 'bg-red-100 text-red-800';
+        console.error('Error al extraer datos:', error)
+        mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`
+        mensajeEstilo.value = 'bg-red-100 text-red-800'
     } finally {
-        cargandoDatos.value = false;
+        cargandoDatos.value = false
     }
-};
-// Función para iniciar el escáner
+}
+
+// ✅ Función para iniciar el escáner CON COOLDOWN usando el composable
 const iniciarEscaner = async () => {
     try {
         mensaje.value = 'Inicializando cámara con zoom 200%...'
@@ -323,12 +348,12 @@ const iniciarEscaner = async () => {
             }
         }
 
-        // Iniciar el escáner con las restricciones definidas
+        // ✅ Iniciar el escáner con COOLDOWN usando el composable
         await codeReader.decodeFromConstraints(
             constraints,
             previewElem,
             (result, err) => {
-                if (result) {
+                if (result && puedeEjecutar()) { // ✅ Usar método del composable
                     const textoQR = result.getText()
 
                     try {
@@ -337,17 +362,24 @@ const iniciarEscaner = async () => {
                         mensaje.value = 'QR leído correctamente. Extrayendo datos...'
                         mensajeEstilo.value = 'bg-blue-100 text-blue-800'
 
+                        // ✅ Bloquear escaneo usando el composable
+                        bloquearEscaneoTemporal(onCooldownStart, onCooldownEnd)
+
                         // Extraer los datos del estudiante a partir de la URL
                         extraerDatosEstudiante(url.href)
 
                     } catch {
                         mensaje.value = 'El contenido del QR no es una URL válida: ' + textoQR
                         mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
+                        // ✅ También bloquear en caso de error
+                        bloquearEscaneoTemporal(onCooldownStart, onCooldownEnd)
                     }
+                } else if (result && !puedeEjecutar()) {
+                    // ✅ QR detectado pero en cooldown
+                    console.log('QR detectado pero en período de cooldown')
                 }
 
                 if (err && !(err instanceof TypeError)) {
-                    // Ignoramos TypeError que puede ocurrir durante operaciones normales
                     console.error('Error de escaneo:', err)
                 }
             }
@@ -355,7 +387,7 @@ const iniciarEscaner = async () => {
 
         camaraActiva.value = true
 
-        // Intentar aplicar configuraciones adicionales de zoom usando MediaStream Track API
+        // Intentar aplicar configuraciones adicionales de zoom
         try {
             const stream = previewElem.srcObject
             const videoTrack = stream.getVideoTracks()[0]
@@ -363,16 +395,14 @@ const iniciarEscaner = async () => {
             if (videoTrack) {
                 const capabilities = videoTrack.getCapabilities()
 
-                // Si la cámara soporta zoom, intentamos aplicarlo mediante la API de MediaStreamTrack
                 if (capabilities.zoom) {
-                    const zoomValue = Math.min(capabilities.zoom.max, 2.0) // Intentamos un zoom de 2.0 (200%)
+                    const zoomValue = Math.min(capabilities.zoom.max, 2.0)
                     await videoTrack.applyConstraints({
                         advanced: [{ zoom: zoomValue }]
                     })
                     mensaje.value = `Cámara activada con zoom ${Math.round(zoomValue * 100)}%`
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
 
-                    // Iniciamos un intervalo para reportar el zoom actual
                     if (controlIntervalId) clearInterval(controlIntervalId)
                     controlIntervalId = setInterval(() => {
                         const actualSettings = videoTrack.getSettings()
@@ -440,7 +470,7 @@ onMounted(async () => {
         mensajeEstilo.value = 'bg-red-100 text-red-800'
     }
 
-    // 🔄 Iniciar el auto-flip cada 3 segundos
+    // 🔄 Iniciar el auto-flip cada 4 segundos
     autoFlipIntervalId = setInterval(() => {
         toggleFlip()
     }, 4000)
@@ -453,5 +483,8 @@ onBeforeUnmount(() => {
         clearInterval(autoFlipIntervalId)
         autoFlipIntervalId = null
     }
+
+    // ✅ Limpiar timers del composable
+    limpiarTimers()
 })
 </script>

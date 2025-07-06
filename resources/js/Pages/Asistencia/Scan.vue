@@ -157,11 +157,23 @@ import ModalCargando from '@/Components/ModalCargando.vue'
 import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
 import TarjetaExterno from '@/Components/TarjetaExterno.vue'
 import { useSound } from '@/composables/useSound'
+import { useCooldown } from '@/composables/useCooldown'
 
 const {
     mostrarAlertaEntradaExitosa,
     puedeMarcarAsistencia
 } = useSound()
+
+// ✅ Usar el composable de cooldown
+const {
+    puedeEscanear,
+    contadorCooldown,
+    bloquearEscaneoTemporal,
+    resetearCooldown,
+    puedeEjecutar,
+    tiempoRestante,
+    limpiarTimers
+} = useCooldown(5000) // 5 segundos de cooldown
 
 const iframeUrl = ref(null)
 const mensaje = ref(null)
@@ -171,51 +183,22 @@ const camaras = ref([])
 const flipped = ref(false)
 const estudianteData = ref(null)
 const cargandoDatos = ref(false)
-const role = ref('estudiante') // Asignar el rol de estudiante por defecto
-
-// ✅ Variables para el sistema de cooldown
-const puedeEscanear = ref(true) // Controla si se puede escanear
-const tiempoEspera = 5000 // 5 segundos en milisegundos
-const contadorCooldown = ref(0) // Para mostrar contador visual
-let intervaloCooldown = null // Para limpiar el intervalo
+const role = ref('estudiante')
 
 let codeReader = null
 let controlIntervalId = null
 let autoFlipIntervalId = null
 
-// ✅ Función para mostrar countdown visual
-const iniciarContadorVisual = () => {
-    contadorCooldown.value = 5
-
-    if (intervaloCooldown) {
-        clearInterval(intervaloCooldown)
-    }
-
-    intervaloCooldown = setInterval(() => {
-        contadorCooldown.value--
-
-        if (contadorCooldown.value <= 0) {
-            clearInterval(intervaloCooldown)
-            intervaloCooldown = null
-        }
-    }, 1000)
+// ✅ Callbacks para el cooldown
+const onCooldownStart = (segundos) => {
+    mensaje.value = `QR procesado. Espera ${segundos} segundos para escanear otro...`
+    mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
 }
 
-// ✅ Función para bloquear escaneo temporalmente
-const bloquearEscaneoTemporal = () => {
-    puedeEscanear.value = false
-    iniciarContadorVisual()
-
-    // Mostrar mensaje de cooldown
-    mensaje.value = `QR procesado. Espera ${tiempoEspera / 1000} segundos para escanear otro...`
-    mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
-
-    setTimeout(() => {
-        puedeEscanear.value = true
-        contadorCooldown.value = 0
-        mensaje.value = 'Listo para escanear nuevamente'
-        mensajeEstilo.value = 'bg-green-100 text-green-800'
-    }, tiempoEspera)
+const onCooldownEnd = () => {
+    mensaje.value = 'ACEPTADO'
+    mostrarAlertaEntradaExitosa()
+    mensajeEstilo.value = 'bg-green-100 text-green-800'
 }
 
 // Función para alternar la animación flip de la tarjeta
@@ -262,7 +245,7 @@ const extraerDatosEstudiante = async (url) => {
             if (!esValido) {
                 mensaje.value = 'Documento no válido'
                 mensajeEstilo.value = 'bg-red-100 text-red-800'
-                return // Salir temprano si no es válido
+                return
             }
 
             console.log(data)
@@ -339,7 +322,7 @@ const extraerDatosEstudiante = async (url) => {
     }
 }
 
-// ✅ Función para iniciar el escáner CON COOLDOWN
+// ✅ Función para iniciar el escáner CON COOLDOWN usando el composable
 const iniciarEscaner = async () => {
     try {
         mensaje.value = 'Inicializando cámara con zoom 200%...'
@@ -365,12 +348,12 @@ const iniciarEscaner = async () => {
             }
         }
 
-        // ✅ Iniciar el escáner con COOLDOWN
+        // ✅ Iniciar el escáner con COOLDOWN usando el composable
         await codeReader.decodeFromConstraints(
             constraints,
             previewElem,
             (result, err) => {
-                if (result && puedeEscanear.value) { // ✅ Verificar si puede escanear
+                if (result && puedeEjecutar()) { // ✅ Usar método del composable
                     const textoQR = result.getText()
 
                     try {
@@ -379,8 +362,8 @@ const iniciarEscaner = async () => {
                         mensaje.value = 'QR leído correctamente. Extrayendo datos...'
                         mensajeEstilo.value = 'bg-blue-100 text-blue-800'
 
-                        // ✅ Bloquear escaneo inmediatamente
-                        bloquearEscaneoTemporal()
+                        // ✅ Bloquear escaneo usando el composable
+                        bloquearEscaneoTemporal(onCooldownStart, onCooldownEnd)
 
                         // Extraer los datos del estudiante a partir de la URL
                         extraerDatosEstudiante(url.href)
@@ -389,15 +372,14 @@ const iniciarEscaner = async () => {
                         mensaje.value = 'El contenido del QR no es una URL válida: ' + textoQR
                         mensajeEstilo.value = 'bg-yellow-100 text-yellow-800'
                         // ✅ También bloquear en caso de error
-                        bloquearEscaneoTemporal()
+                        bloquearEscaneoTemporal(onCooldownStart, onCooldownEnd)
                     }
-                } else if (result && !puedeEscanear.value) {
+                } else if (result && !puedeEjecutar()) {
                     // ✅ QR detectado pero en cooldown
                     console.log('QR detectado pero en período de cooldown')
                 }
 
                 if (err && !(err instanceof TypeError)) {
-                    // Ignoramos TypeError que puede ocurrir durante operaciones normales
                     console.error('Error de escaneo:', err)
                 }
             }
@@ -405,7 +387,7 @@ const iniciarEscaner = async () => {
 
         camaraActiva.value = true
 
-        // Intentar aplicar configuraciones adicionales de zoom usando MediaStream Track API
+        // Intentar aplicar configuraciones adicionales de zoom
         try {
             const stream = previewElem.srcObject
             const videoTrack = stream.getVideoTracks()[0]
@@ -413,16 +395,14 @@ const iniciarEscaner = async () => {
             if (videoTrack) {
                 const capabilities = videoTrack.getCapabilities()
 
-                // Si la cámara soporta zoom, intentamos aplicarlo mediante la API de MediaStreamTrack
                 if (capabilities.zoom) {
-                    const zoomValue = Math.min(capabilities.zoom.max, 2.0) // Intentamos un zoom de 2.0 (200%)
+                    const zoomValue = Math.min(capabilities.zoom.max, 2.0)
                     await videoTrack.applyConstraints({
                         advanced: [{ zoom: zoomValue }]
                     })
                     mensaje.value = `Cámara activada con zoom ${Math.round(zoomValue * 100)}%`
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
 
-                    // Iniciamos un intervalo para reportar el zoom actual
                     if (controlIntervalId) clearInterval(controlIntervalId)
                     controlIntervalId = setInterval(() => {
                         const actualSettings = videoTrack.getSettings()
@@ -484,14 +464,13 @@ onMounted(async () => {
         }
 
         await iniciarEscaner()
-        //await extraerDatosEstudiante('https://www.uagrm.edu.bo/validar/1ef16b9e782dce23e7c4eba69bb8da5a84edfa85814cd78f9b6433183be1f558');
     } catch (error) {
         console.error('Error al enumerar dispositivos:', error)
         mensaje.value = `Error: ${error.message || 'No se pudo enumerar las cámaras'}`
         mensajeEstilo.value = 'bg-red-100 text-red-800'
     }
 
-    // 🔄 Iniciar el auto-flip cada 3 segundos
+    // 🔄 Iniciar el auto-flip cada 4 segundos
     autoFlipIntervalId = setInterval(() => {
         toggleFlip()
     }, 4000)
@@ -505,10 +484,7 @@ onBeforeUnmount(() => {
         autoFlipIntervalId = null
     }
 
-    // ✅ Limpiar intervalo de cooldown
-    if (intervaloCooldown) {
-        clearInterval(intervaloCooldown)
-        intervaloCooldown = null
-    }
+    // ✅ Limpiar timers del composable
+    limpiarTimers()
 })
 </script>

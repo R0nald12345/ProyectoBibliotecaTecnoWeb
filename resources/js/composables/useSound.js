@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 export const useSound = () => {
     // Variable para controlar el tiempo de espera
     let ultimoMarcado = 0
-    const TIEMPO_ESPERA = 2000 // 2 segundos en milisegundos
+    const TIEMPO_ESPERA = 4000 // 2 segundos en milisegundos
 
     // Función para verificar si puede marcar asistencia
     const puedeMarcarAsistencia = () => {
