@@ -139,12 +139,15 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { BrowserQRCodeReader } from '@zxing/browser'
-
 import axios from 'axios'
 import ModalCargando from '@/Components/ModalCargando.vue'
 import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
 import TarjetaExterno from '@/Components/TarjetaExterno.vue'
-
+import { useSound } from '@/composables/useSound'
+const { 
+    mostrarAlertaEntradaExitosa, 
+    puedeMarcarAsistencia 
+} = useSound()
 const iframeUrl = ref(null)
 const mensaje = ref(null)
 const mensajeEstilo = ref('bg-blue-100 text-blue-800')
@@ -164,41 +167,48 @@ const toggleFlip = () => {
 }
 
 
-// Función para extraer los datos del estudiante desde la URL
+// Función para alternar la animación flip de la tarjeta
 
+// Función para extraer los datos del estudiante desde la URL
 const extraerDatosEstudiante = async (url) => {
     try {
         if (url.includes('/qr/')) {
             role.value = 'externo';
         }
+        
         cargandoDatos.value = true;
+        
         if (role.value === 'estudiante') {
+            // Verificar si puede marcar asistencia antes de proceder
+            if (!puedeMarcarAsistencia()) {
+                cargandoDatos.value = false;
+                return;
+            }
+
             const response = await fetch(`/scrap-estudiante?url=${url}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 }
             });
-
+            
             if (!response.ok) {
                 throw new Error('Error al hacer scraping en el servidor');
             }
-
+            
             const data = await response.json();
             estudianteData.value = data;
-
             const esValido = data && Object.keys(data).length > 0 && !data.error;
-
             estudianteData.value = esValido ? data : {};
-
+            
             if (!esValido) {
                 mensaje.value = 'Documento no válido';
                 mensajeEstilo.value = 'bg-red-100 text-red-800';
                 return; // Salir temprano si no es válido
             }
-
+            
             console.log(data);
-
+            
             // Registrar entrada automáticamente
             const entradaData = {
                 descripcion: 'Estudiante aceptado',
@@ -207,11 +217,14 @@ const extraerDatosEstudiante = async (url) => {
                 user_id: parseInt(data.REGISTRO),
                 tipoalerta_id: 1,
             };
-
+            
             axios.post(route('entrada.store'), entradaData)
                 .then(res => {
                     mensaje.value = res.data.message;
                     mensajeEstilo.value = 'bg-green-100 text-green-800';
+                    
+                    // Mostrar alert de entrada exitosa
+                    mostrarAlertaEntradaExitosa();
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada';
@@ -220,18 +233,45 @@ const extraerDatosEstudiante = async (url) => {
                 .finally(() => {
                     cargandoDatos.value = false;
                 });
-
         } else {
+            // Usuario externo - también verificar antes de proceder
+            if (!puedeMarcarAsistencia()) {
+                cargandoDatos.value = false;
+                return;
+            }
 
-            const res = await axios.get(url)
-            console.log(res.data)
-            console.log(role.value)
-            estudianteData.value = res.data;
-            mensaje.value = `Datos extraídos correctamente`;
-            mensajeEstilo.value = 'bg-green-100 text-green-800';
-
+            // Extraer token de la URL
+            const urlParts = url.split('/');
+            const token = urlParts[urlParts.length - 1];
+            
+            // Obtener datos del usuario usando la nueva ruta
+            const userResponse = await axios.get(`/qr/${token}`);
+            console.log('Datos del usuario:', userResponse.data);
+            
+            if (!userResponse.data.success) {
+                throw new Error('Error al obtener datos del usuario');
+            }
+            
+            estudianteData.value = userResponse.data.user;
+            console.log('Role:', role.value);
+            
+            // Registrar entrada usando la nueva ruta
+            const entradaResponse = await axios.post('/qr/entrada', {
+                user_id: userResponse.data.user.id,
+                tipo: 'entrada',
+                descripcion: 'Entrada vía QR - Usuario externo'
+            });
+            
+            if (entradaResponse.data.success) {
+                // Mostrar SweetAlert para usuario externo
+                mostrarAlertaEntradaExitosa();
+                
+                mensaje.value = entradaResponse.data.mensaje;
+                mensajeEstilo.value = 'bg-green-100 text-green-800';
+            } else {
+                throw new Error('Error al registrar entrada');
+            }
         }
-
     } catch (error) {
         console.error('Error al extraer datos:', error);
         mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`;
@@ -240,8 +280,6 @@ const extraerDatosEstudiante = async (url) => {
         cargandoDatos.value = false;
     }
 };
-
-
 // Función para iniciar el escáner
 const iniciarEscaner = async () => {
     try {

@@ -53,8 +53,10 @@ Route::resource('gestion', GestionController::class);
 Route::resource('roles', RoleController::class);
 Route::resource('usuarios', UsuarioController::class);
 
-Route::get('/qr/{token}', [QRController::class, 'registrarEntrada'])->name('qr.registrar');
+Route::get('/qr/{token}', [QRController::class, 'obtenerDatosUsuario']);
 Route::get('/mi-qr', [QRController::class, 'mostrarQR'])->middleware('auth')->name('qr.mostrar');
+Route::post('/qr/entrada', [QRController::class, 'registrarEntrada']);
+Route::post('/qr/salida', [QRController::class, 'registrarSalida']);
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
