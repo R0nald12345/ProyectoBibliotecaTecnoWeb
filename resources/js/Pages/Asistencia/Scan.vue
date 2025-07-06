@@ -116,30 +116,24 @@
 
                 </div>
             </div>
-<!-- Tarjeta de usuario externo con flip -->
-<div v-else-if="role ==='externo'" class="rounded-2xl shadow-xl p-6"
-     style="background-color: var(--bg-card); color: var(--text-color)">
-  <h3 class="text-xl font-bold mb-6 text-center" style="color: var(--text-color)">
-    Carnet de Usuario 
-  </h3>
+            <!-- Tarjeta de usuario externo con flip -->
+            <div v-else-if="role === 'externo'" class="rounded-2xl shadow-xl p-6"
+                style="background-color: var(--bg-card); color: var(--text-color)">
+                <h3 class="text-xl font-bold mb-6 text-center" style="color: var(--text-color)">
+                    Carnet de Usuario
+                </h3>
 
-  <div class="relative w-96 h-64 transition-all duration-700 ease-in-out cursor-pointer" :style="{
-      transformStyle: 'preserve-3d',
-      transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
-    }" @click="toggleFlip">
-    <TarjetaExterno
-      :estudianteData="estudianteData"
-      :flipped="flipped"
-      @toggleFlip="toggleFlip"
-    />
-  </div>
-</div>
-
-            <ModalCargando v-if="cargandoDatos" />
+                <div class="relative w-96 h-64 transition-all duration-700 ease-in-out cursor-pointer" :style="{
+                    transformStyle: 'preserve-3d',
+                    transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                }" @click="toggleFlip">
+                    <TarjetaExterno :estudianteData="estudianteData" :flipped="flipped" @toggleFlip="toggleFlip" />
+                </div>
+            </div>
         </div>
+
+        <ModalCargando v-if="cargandoDatos" />
     </div>
-
-
 </template>
 
 <script setup>
@@ -233,9 +227,9 @@ const extraerDatosEstudiante = async (url) => {
             console.log(res.data)
             console.log(role.value)
             estudianteData.value = res.data;
-            mensaje.value =`Datos extraídos correctamente`;
+            mensaje.value = `Datos extraídos correctamente`;
             mensajeEstilo.value = 'bg-green-100 text-green-800';
-        
+
         }
 
     } catch (error) {

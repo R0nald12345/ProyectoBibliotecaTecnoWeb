@@ -34,10 +34,13 @@ import download from 'downloadjs'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { usePage } from '@inertiajs/vue3'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
 const user = usePage().props.auth.user
 const qrImage = ref(null)
 const mensaje = ref('')
+
+defineOptions({ layout: AppLayout })
 
 // Generamos el endpoint personalizado para el QR
 const qrEndpoint = `${window.location.origin}/qr/${user.qr_token}`
