@@ -436,6 +436,7 @@ onMounted(async () => {
         }
 
         await iniciarEscaner()
+        //await extraerDatosEstudiante('https://www.uagrm.edu.bo/validar/1ef16b9e782dce23e7c4eba69bb8da5a84edfa85814cd78f9b6433183be1f558');
     } catch (error) {
         console.error('Error al enumerar dispositivos:', error)
         mensaje.value = `Error: ${error.message || 'No se pudo enumerar las cámaras'}`
