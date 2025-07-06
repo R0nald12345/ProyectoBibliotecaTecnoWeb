@@ -58,48 +58,48 @@ const logout = () => {
 const hasRole = (roleName) => {
     return Array.isArray(user?.roles) && user.roles.some(r => r.name === roleName);
 };
+
+
 </script>
 
 <template>
     <div>
+
         <Head :title="title" />
 
         <div class="min-h-screen flex theme-container">
             <!-- Sidebar -->
+
             <aside class="w-64 sidebar text-white p-6 hidden md:flex flex-col shadow-xl min-h-screen">
                 <div class="mb-8 flex items-center gap-2">
                     <Link :href="route('dashboard')">
-                        <ApplicationMark class="h-10 w-auto" />
+                    <ApplicationMark class="h-10 w-auto" />
                     </Link>
                     <span class="font-bold text-lg tracking-wide">Biblioteca</span>
                 </div>
 
                 <!-- Theme Selector -->
                 <div class="mb-6 relative">
-                    <button
-                        @click="showThemeSelector = !showThemeSelector"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition theme-selector-button"
-                    >
-                        <span class="text-lg">{{ themes.find(t => t.id === currentTheme)?.icon }}</span>
+                    <button @click="showThemeSelector = !showThemeSelector"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition theme-selector-button">
+                        <span class="text-lg">{{themes.find(t => t.id === currentTheme)?.icon}}</span>
                         <div class="flex-1 text-left">
-                            <div class="font-medium">{{ themes.find(t => t.id === currentTheme)?.name }}</div>
+                            <div class="font-medium">{{themes.find(t => t.id === currentTheme)?.name}}</div>
                             <div class="text-xs opacity-75">Cambiar tema</div>
                         </div>
-                        <svg class="w-4 h-4 transform transition-transform" :class="{'rotate-180': showThemeSelector}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 transform transition-transform" :class="{ 'rotate-180': showThemeSelector }"
+                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
 
                     <!-- Theme Dropdown -->
-                    <div v-if="showThemeSelector" class="absolute top-full left-0 right-0 mt-2 theme-dropdown rounded-lg shadow-lg z-50">
+                    <div v-if="showThemeSelector"
+                        class="absolute top-full left-0 right-0 mt-2 theme-dropdown rounded-lg shadow-lg z-50">
                         <div class="p-2 space-y-1">
-                            <button
-                                v-for="theme in themes"
-                                :key="theme.id"
-                                @click="setTheme(theme.id)"
+                            <button v-for="theme in themes" :key="theme.id" @click="setTheme(theme.id)"
                                 class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition theme-option"
-                                :class="{'theme-option-active': currentTheme === theme.id}"
-                            >
+                                :class="{ 'theme-option-active': currentTheme === theme.id }">
                                 <span class="text-lg">{{ theme.icon }}</span>
                                 <div class="flex-1 text-left">
                                     <div class="font-medium">{{ theme.name }}</div>
@@ -111,85 +111,103 @@ const hasRole = (roleName) => {
                 </div>
 
                 <nav class="flex-1 space-y-2">
+                    <!-- Todos los roles -->
                     <Link :href="route('dashboard')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
                         :class="{ 'nav-link-active': route().current('dashboard') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Dashboard
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Dashboard
                     </Link>
 
-                      <Link :href="route('qr.mostrar')"
+                    <Link :href="route('qr.mostrar')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
                         :class="{ 'nav-link-active': route().current('mi-qr') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Mi Qr
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Mi QR
                     </Link>
 
-                    <Link :href="route('gestion.index')"
+                    <!-- Solo admin y administrativo -->
+                    <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('gestion.index')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
                         :class="{ 'nav-link-active': route().current('gestion.*') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Gestiones
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Gestiones
                     </Link>
 
+                    <!-- Solo admin -->
                     <Link v-if="hasRole('admin')" :href="route('usuarios.index')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
                         :class="{ 'nav-link-active': route().current('usuarios.*') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Usuarios
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Usuarios
                     </Link>
 
-                    <Link :href="route('asistencia.index')"
+                    <!-- Solo admin y administrativo -->
+                    <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('asistencia.index')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
-                        :class="{ 'nav-link-active': route().current('asistencia.*') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Asistencia E
+                        :class="{ 'nav-link-active': route().current('asistencia.index') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Asistencia E
                     </Link>
 
-                    <Link :href="route('asistencia.index2')"
+                    <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('asistencia.index2')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
-                        :class="{ 'nav-link-active': route().current('asistencia.*') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Asistencia S
+                        :class="{ 'nav-link-active': route().current('asistencia.index2') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Asistencia S
                     </Link>
 
+                    <!-- Solo admin -->
                     <Link v-if="hasRole('admin')" :href="route('roles.index')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
                         :class="{ 'nav-link-active': route().current('roles.*') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Roles
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Roles
                     </Link>
 
-                    <Link :href="route('entrada.index')"
+                    <!-- Solo admin y administrativo -->
+                    <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('entrada.index')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
                         :class="{ 'nav-link-active': route().current('entrada.*') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Asistencia Entrada
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Asistencia Entrada
                     </Link>
 
-                    <Link :href="route('salida.index')"
+                    <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('salida.index')"
                         class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
                         :class="{ 'nav-link-active': route().current('salidas.*') }">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Asistencia Salida
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path
+                            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Asistencia Salida
                     </Link>
                 </nav>
 
@@ -197,6 +215,7 @@ const hasRole = (roleName) => {
                     <span class="text-xs opacity-75">© 2024 Biblioteca</span>
                 </div>
             </aside>
+
 
             <!-- Main content -->
             <div class="flex-1 flex flex-col">
@@ -216,7 +235,8 @@ const hasRole = (roleName) => {
                             <template #trigger>
                                 <button class="flex items-center gap-2 px-3 py-1 rounded transition profile-button">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                        <path
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                                     </svg>
                                     Perfil
                                 </button>
