@@ -1,19 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Http;
-use Inertia\Inertia;
-
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\GestionController;
 use App\Http\Controllers\HolaMundoController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Http;
+use Inertia\Inertia;
+
+
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\QRController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalidaController;
 use App\Http\Controllers\ScraperController;
 use App\Http\Controllers\UsuarioController;
