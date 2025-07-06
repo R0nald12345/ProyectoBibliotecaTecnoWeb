@@ -268,7 +268,38 @@ const sidebarItems = ref([
                         </Link>
                         <span class="font-bold text-lg tracking-wide">Biblioteca</span>
                     </div>
-                    <!-- Puedes copiar aquí el mismo contenido de tu sidebar de escritorio -->
+
+                    <!-- Selector de tema (COPIA Y PEGA ESTE BLOQUE AQUÍ) -->
+                    <div class="mb-6 relative">
+                        <button @click="showThemeSelector = !showThemeSelector"
+                            class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition theme-selector-button">
+                            <span class="text-lg">{{themes.find(t => t.id === currentTheme)?.icon}}</span>
+                            <div class="flex-1 text-left">
+                                <div class="font-medium">{{themes.find(t => t.id === currentTheme)?.name}}</div>
+                                <div class="text-xs opacity-75">Cambiar tema</div>
+                            </div>
+                            <svg class="w-4 h-4 transform transition-transform" :class="{ 'rotate-180': showThemeSelector }"
+                                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div v-if="showThemeSelector"
+                            class="absolute top-full left-0 right-0 mt-2 theme-dropdown rounded-lg shadow-lg z-50">
+                            <div class="p-2 space-y-1">
+                                <button v-for="theme in themes" :key="theme.id" @click="setTheme(theme.id)"
+                                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition theme-option"
+                                    :class="{ 'theme-option-active': currentTheme === theme.id }">
+                                    <span class="text-lg">{{ theme.icon }}</span>
+                                    <div class="flex-1 text-left">
+                                        <div class="font-medium">{{ theme.name }}</div>
+                                        <div class="text-xs opacity-75">{{ theme.description }}</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin del selector de tema -->
+
                     <nav class="flex-1 space-y-2">
                         <!-- Todos los roles -->
                         <Link :href="route('dashboard')"
