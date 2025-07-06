@@ -103,7 +103,7 @@
                             class="absolute top-4 right-4 flex items-center space-x-2 bg-black bg-opacity-50 rounded-full px-3 py-1">
                             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             <span class="text-white text-sm font-medium">{{ camaraActiva ? 'Escaneando...' : 'Inactivo'
-                                }}</span>
+                            }}</span>
                         </div>
                     </div>
                 </div>
@@ -197,12 +197,12 @@ const onCooldownStart = (segundos) => {
 }
 
 const onCooldownEnd = () => {
-    if(mensajePeticion){
+    if (mensajePeticion) {
         mensaje.value = 'ACEPTADO'
         mostrarAlertaEntradaExitosa()
         mensajeEstilo.value = 'bg-green-100 text-green-800'
     }
-   
+
 }
 
 // Función para alternar la animación flip de la tarjeta
@@ -266,15 +266,15 @@ const extraerDatosEstudiante = async (url) => {
             axios.post(route('entrada.store'), entradaData)
                 .then(res => {
                     mensaje.value = res.data.message
-                    mensajePeticion = true 
+                    mensajePeticion.value = true;
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
 
                     // Mostrar alert de entrada exitosa
-                   // mostrarAlertaEntradaExitosa()
+                    // mostrarAlertaEntradaExitosa()
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
-                    mensajePeticion= false
+                    mensajePeticion.value = false;
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
                 .finally(() => {
