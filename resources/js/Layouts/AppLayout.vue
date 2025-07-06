@@ -216,6 +216,127 @@ const hasRole = (roleName) => {
                 </div>
             </aside>
 
+            <!-- Sidebar móvil -->
+            <aside
+                v-if="showingNavigationDropdown"
+                class="fixed inset-0 z-50 bg-black bg-opacity-40 flex md:hidden"
+            >
+                <div class="w-64 bg-gradient-to-b from-indigo-900 to-indigo-700 text-white p-6 flex flex-col shadow-xl min-h-screen">
+                    <div class="mb-8 flex items-center gap-2">
+                        <Link :href="route('dashboard')" @click="showingNavigationDropdown = false">
+                            <ApplicationMark class="h-10 w-auto" />
+                        </Link>
+                        <span class="font-bold text-lg tracking-wide">Biblioteca</span>
+                    </div>
+                    <!-- Puedes copiar aquí el mismo contenido de tu sidebar de escritorio -->
+                    <nav class="flex-1 space-y-2">
+                        <!-- Todos los roles -->
+                        <Link :href="route('dashboard')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('dashboard') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Dashboard
+                        </Link>
+
+                        <Link :href="route('qr.mostrar')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('mi-qr') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Mi QR
+                        </Link>
+
+                        <!-- Solo admin y administrativo -->
+                        <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('gestion.index')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('gestion.*') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Gestiones
+                        </Link>
+
+                        <!-- Solo admin -->
+                        <Link v-if="hasRole('admin')" :href="route('usuarios.index')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('usuarios.*') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Usuarios
+                        </Link>
+
+                        <!-- Solo admin y administrativo -->
+                        <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('asistencia.index')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('asistencia.index') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Asistencia E
+                        </Link>
+
+                        <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('asistencia.index2')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('asistencia.index2') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Asistencia S
+                        </Link>
+
+                        <!-- Solo admin -->
+                        <Link v-if="hasRole('admin')" :href="route('roles.index')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('roles.*') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Roles
+                        </Link>
+
+                        <!-- Solo admin y administrativo -->
+                        <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('entrada.index')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('entrada.*') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Asistencia Entrada
+                        </Link>
+
+                        <Link v-if="hasRole('admin') || hasRole('administrativo')" :href="route('salida.index')"
+                            class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                            :class="{ 'nav-link-active': route().current('salidas.*') }">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path
+                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Asistencia Salida
+                        </Link>
+                    </nav>
+                    <div class="mt-auto pt-6 border-t sidebar-footer">
+                        <span class="text-xs opacity-75">© 2024 Biblioteca</span>
+                    </div>
+                </div>
+                <!-- Clic fuera del menú cierra el sidebar -->
+                <div class="flex-1" @click="showingNavigationDropdown = false"></div>
+            </aside>
+
 
             <!-- Main content -->
             <div class="flex-1 flex flex-col">
