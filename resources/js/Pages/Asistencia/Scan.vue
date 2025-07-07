@@ -197,7 +197,7 @@ const onCooldownStart = (segundos) => {
 }
 
 const onCooldownEnd = () => {
-    if(mensajePeticion){
+    if(mensajePeticion.value){
         mensaje.value = 'ACEPTADO'
         mostrarAlertaEntradaExitosa()
         mensajeEstilo.value = 'bg-green-100 text-green-800'
