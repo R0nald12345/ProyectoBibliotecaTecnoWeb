@@ -35,6 +35,7 @@ class EntradasExport implements FromCollection, WithHeadings
                 'fecha' => $e->fecha,
                 'hora' => $e->hora,
                 'usuario' => $e->user->name ?? '—',
+                'gestion' => $e->user->name ?? '—',
                 'tipo_alerta' => $e->tipoalerta->descripcion ?? '—',
             ];
         });
