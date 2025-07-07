@@ -210,7 +210,7 @@ const mostrarPaginacion = computed(() =>
                 </tbody>
             </table>
 
-<div v-if="filteredEntradas.length === 0" class="text-center py-4" style="color: var(--text-muted)">
+            <div v-if="filteredEntradas.length === 0" class="text-center py-4" style="color: var(--text-muted)">
                 No se encontraron entradas.
             </div>
 
@@ -224,11 +224,6 @@ const mostrarPaginacion = computed(() =>
                         }" v-html="link.label" />
                 </template>
             </div>
-        </div>
-
-<div class="mt-10 p-4 rounded shadow w-full h-[400px]" style="background-color: var(--bg-color); color: var(--text-color)">
-            <h2 class="text-xl font-semibold mb-4">Gráfico: Entradas por Gestión</h2>
-            <canvas ref="canvasRef" class="w-full h-full"></canvas>
         </div>
     </div>
 </template>
