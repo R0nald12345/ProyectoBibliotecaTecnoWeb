@@ -184,6 +184,7 @@ const flipped = ref(false)
 const estudianteData = ref(null)
 const cargandoDatos = ref(false)
 const role = ref('estudiante')
+const mensajePeticion = ref(null)
 
 let codeReader = null
 let controlIntervalId = null
@@ -196,9 +197,12 @@ const onCooldownStart = (segundos) => {
 }
 
 const onCooldownEnd = () => {
-    mensaje.value = 'ACEPTADO'
-    mostrarAlertaEntradaExitosa()
-    mensajeEstilo.value = 'bg-green-100 text-green-800'
+    if(mensajePeticion){
+        mensaje.value = 'ACEPTADO'
+        mostrarAlertaEntradaExitosa()
+        mensajeEstilo.value = 'bg-green-100 text-green-800'
+    }
+   
 }
 
 // Función para alternar la animación flip de la tarjeta
@@ -262,13 +266,15 @@ const extraerDatosEstudiante = async (url) => {
             axios.post(route('entrada.store'), entradaData)
                 .then(res => {
                     mensaje.value = res.data.message
+                    mensajePeticion = true 
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
 
                     // Mostrar alert de entrada exitosa
-                    mostrarAlertaEntradaExitosa()
+                   // mostrarAlertaEntradaExitosa()
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
+                    mensajePeticion= false
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
                 .finally(() => {

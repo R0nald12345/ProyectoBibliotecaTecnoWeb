@@ -61,7 +61,7 @@ class SalidaController extends Controller
         if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Usuario no encontrado',
+                'message' => 'Usuario no encontrado comunicarse con el ADMINISTRADOR',
             ], 404);
         }
 
