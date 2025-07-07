@@ -18,13 +18,6 @@ import AppLayout from '@/Layouts/AppLayout.vue'
          Asistencia de entrada y salida de los Usuarios, control de gestiones y Reportes.
         </p>
 
-        <div class="mt-8">
-          <button
-            class="bg-amber-600 hover:bg-amber-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg transition"
-          >
-            Ir al catálogo
-          </button>
-        </div>
       </div>
     </div>
   </AppLayout>

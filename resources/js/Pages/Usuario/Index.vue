@@ -33,12 +33,13 @@ const filteredUsuarios = computed(() => {
 
 function deleteUsuario(id) {
     if (confirm('¿Estás seguro de eliminar este usuario?')) {
-        router.delete(`/usuarios/${id}`, {
+        router.delete(route('usuarios.destroy', id), {
             preserveScroll: true,
             preserveState: false,
-        })
+        });
     }
 }
+
 </script>
 
 <template>

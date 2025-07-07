@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Entrada;
+use App\Models\entrada;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -19,7 +19,7 @@ class EntradasExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = Entrada::with('user', 'tipoalerta');
+        $query = entrada::with('user', 'tipoalerta');
 
         if ($this->inicio) {
             $query->whereDate('fecha', '>=', $this->inicio);
@@ -31,18 +31,19 @@ class EntradasExport implements FromCollection, WithHeadings
 
         return $query->get()->map(function ($e) {
             return [
-                'descripcion' => $e->descripcion,
-                'fecha' => $e->fecha,
-                'hora' => $e->hora,
-                'usuario' => $e->user->name ?? '—',
-                'gestion' => $e->user->name ?? '—',
-                'tipo_alerta' => $e->tipoalerta->descripcion ?? '—',
+                'Id' => $e->id,
+                'Descripcion' => $e->descripcion,
+                'Fecha' => $e->fecha,
+                'Hora' => $e->hora,
+                'Usuario' => $e->user->name ?? '—',
+                'Gestion' => $e->user->name ?? '—',
+                'Tipo_alerta' => $e->tipoalerta->descripcion ?? '—',
             ];
         });
     }
 
     public function headings(): array
     {
-        return ['Descripción', 'Fecha', 'Hora', 'Usuario', 'Tipo de Alerta'];
+        return ['Id', 'Descripción', 'Fecha', 'Hora', 'Usuario', 'Tipo de Alerta'];
     }
 }

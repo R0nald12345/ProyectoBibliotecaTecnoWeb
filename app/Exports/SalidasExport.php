@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Salida;
+use App\Models\salida;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Collection;

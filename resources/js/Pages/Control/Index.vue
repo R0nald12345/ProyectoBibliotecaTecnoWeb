@@ -35,7 +35,7 @@ const filtrarDatos = () => {
         return;
     }
 
-    router.get(route('dashboard'), {
+    router.get(route('control.index'), {
         fecha_inicio: fechaInicio.value,
         fecha_fin: fechaFin.value
     }, {

@@ -19,17 +19,18 @@ const form = useForm({
 })
 
 function submit() {
-  form.put(`/usuarios/${props.usuario.id}`, {
+  form.put(route('usuarios.update', props.usuario.id), {
     preserveScroll: true,
-  })
+  });
 }
+
 </script>
 
 <template>
   <div>
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-bold text-gray-800">Editar Usuario</h1>
-      <Link href="/usuarios" class="text-blue-600 hover:underline font-semibold">← Volver</Link>
+     <Link :href="route('usuarios.index')" class="text-blue-600 hover:underline font-semibold">← Volver</Link>
     </div>
 
     <form @submit.prevent="submit" class="bg-white p-6 rounded shadow space-y-4">
