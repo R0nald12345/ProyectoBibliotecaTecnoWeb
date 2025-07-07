@@ -184,11 +184,11 @@ const flipped = ref(false)
 const estudianteData = ref(null)
 const cargandoDatos = ref(false)
 const role = ref('estudiante')
-
+const baseUrl = import.meta.env.VITE_WEBSITE_URL
 let codeReader = null
 let controlIntervalId = null
 let autoFlipIntervalId = null
-
+const mensajePeticion = ref(null)
 // ✅ Callbacks para el cooldown
 const onCooldownStart = (segundos) => {
     mensaje.value = `QR procesado. Espera ${segundos} segundos para escanear otro...`
@@ -196,9 +196,11 @@ const onCooldownStart = (segundos) => {
 }
 
 const onCooldownEnd = () => {
-    mensaje.value = 'ACEPTADO'
-    mostrarAlertaSalidaExitosa()
-    mensajeEstilo.value = 'bg-green-100 text-green-800'
+    if(mensajePeticion.value){
+        mensaje.value = 'ACEPTADO'
+        mostrarAlertaSalidaExitosa()
+        mensajeEstilo.value = 'bg-green-100 text-green-800'
+    }
 }
 
 // Función para alternar la animación flip de la tarjeta
@@ -207,7 +209,7 @@ const toggleFlip = () => {
 }
 
 function goBack() {
-    window.location.href = '/dashboard'
+    window.location.href = `${baseUrl}/dashboard`
 }
 
 // Función para extraer los datos del estudiante desde la URL
@@ -226,7 +228,7 @@ const extraerDatosEstudiante = async (url) => {
                 return
             }
 
-            const response = await fetch(`/scrap-estudiante?url=${url}`, {
+            const response = await fetch(`${baseUrl}/scrap-estudiante?url=${url}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -263,13 +265,14 @@ const extraerDatosEstudiante = async (url) => {
                 .then(res => {
                     mensaje.value = res.data.message
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
-
+                    mensajePeticion.value= true
                     // Mostrar alert de entrada exitosa
                     mostrarAlertaSalidaExitosa()
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
+                     mensajePeticion.value= false
                 })
                 .finally(() => {
                     cargandoDatos.value = false
@@ -286,7 +289,7 @@ const extraerDatosEstudiante = async (url) => {
             const token = urlParts[urlParts.length - 1]
 
             // Obtener datos del usuario usando la nueva ruta
-            const userResponse = await axios.get(`/qr/${token}`)
+            const userResponse = await axios.get(`${baseUrl}/qr/${token}`)
             console.log('Datos del usuario:', userResponse.data)
 
             if (!userResponse.data.success) {
@@ -297,7 +300,7 @@ const extraerDatosEstudiante = async (url) => {
             console.log('Role:', role.value)
 
             // Registrar entrada usando la nueva ruta
-            const entradaResponse = await axios.post('/qr/salida', {
+            const entradaResponse = await axios.post(`${baseUrl}/qr/salida`, {
                 user_id: userResponse.data.user.id,
                 tipo: 'salida',
                 descripcion: 'Salida vía QR - Usuario externo'
@@ -305,12 +308,14 @@ const extraerDatosEstudiante = async (url) => {
 
             if (entradaResponse.data.success) {
                 // Mostrar SweetAlert para usuario externo
-                mostrarAlertaSalidaExitosa()
+               mensajePeticion.value = true
 
                 mensaje.value = entradaResponse.data.mensaje
                 mensajeEstilo.value = 'bg-green-100 text-green-800'
             } else {
-                throw new Error('Error al registrar la salida')
+                 mensajePeticion.value = false
+                mensaje.value = entradaResponse.data.mensaje || 'Error al registrar salida. Consultar con el administrador'
+                mensajeEstilo.value = 'bg-red-100 text-red-800'
             }
         }
     } catch (error) {

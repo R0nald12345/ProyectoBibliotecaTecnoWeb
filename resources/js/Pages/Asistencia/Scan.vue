@@ -158,7 +158,7 @@ import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
 import TarjetaExterno from '@/Components/TarjetaExterno.vue'
 import { useSound } from '@/composables/useSound'
 import { useCooldown } from '@/composables/useCooldown'
-
+const baseUrl = import.meta.env.VITE_WEBSITE_URL
 const {
     mostrarAlertaEntradaExitosa,
     puedeMarcarAsistencia
@@ -211,7 +211,7 @@ const toggleFlip = () => {
 }
 
 function goBack() {
-    window.location.href = '/dashboard'
+    window.location.href = `${baseUrl}/dashboard`
 }
 
 // Función para extraer los datos del estudiante desde la URL
@@ -230,7 +230,7 @@ const extraerDatosEstudiante = async (url) => {
                 return
             }
 
-            const response = await fetch(`/scrap-estudiante?url=${url}`, {
+            const response = await fetch(`${baseUrl}/scrap-estudiante?url=${url}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -266,7 +266,7 @@ const extraerDatosEstudiante = async (url) => {
             axios.post(route('entrada.store'), entradaData)
                 .then(res => {
                     mensaje.value = res.data.message
-                    mensajePeticion.value = true;
+                    mensajePeticion = true 
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
 
                     // Mostrar alert de entrada exitosa
@@ -274,7 +274,7 @@ const extraerDatosEstudiante = async (url) => {
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
-                    mensajePeticion.value = false;
+                    mensajePeticion= false
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
                 .finally(() => {
@@ -292,7 +292,7 @@ const extraerDatosEstudiante = async (url) => {
             const token = urlParts[urlParts.length - 1]
 
             // Obtener datos del usuario usando la nueva ruta
-            const userResponse = await axios.get(`/qr/${token}`)
+            const userResponse = await axios.get(`${baseUrl}/qr/${token}`)
             console.log('Datos del usuario:', userResponse.data)
 
             if (!userResponse.data.success) {
@@ -303,7 +303,7 @@ const extraerDatosEstudiante = async (url) => {
             console.log('Role:', role.value)
 
             // Registrar entrada usando la nueva ruta
-            const entradaResponse = await axios.post('/qr/entrada', {
+            const entradaResponse = await axios.post(`${baseUrl}/qr/entrada`, {
                 user_id: userResponse.data.user.id,
                 tipo: 'entrada',
                 descripcion: 'Entrada vía QR - Usuario externo'
@@ -311,12 +311,13 @@ const extraerDatosEstudiante = async (url) => {
 
             if (entradaResponse.data.success) {
                 // Mostrar SweetAlert para usuario externo
-                mostrarAlertaEntradaExitosa()
+                mensajePeticion.value = true 
 
                 mensaje.value = entradaResponse.data.mensaje
                 mensajeEstilo.value = 'bg-green-100 text-green-800'
             } else {
-                throw new Error('Error al registrar entrada')
+                mensaje.value = entradaResponse.data.mensaje || 'Error al registrar entrada Consultar con el administrador'
+                mensajePeticion= false
             }
         }
     } catch (error) {
