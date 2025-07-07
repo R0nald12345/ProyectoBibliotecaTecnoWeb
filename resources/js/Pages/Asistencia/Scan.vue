@@ -158,7 +158,7 @@ import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
 import TarjetaExterno from '@/Components/TarjetaExterno.vue'
 import { useSound } from '@/composables/useSound'
 import { useCooldown } from '@/composables/useCooldown'
-
+const baseUrl = import.meta.env.VITE_WEBSITE_URL
 const {
     mostrarAlertaEntradaExitosa,
     puedeMarcarAsistencia
@@ -230,7 +230,7 @@ const extraerDatosEstudiante = async (url) => {
                 return
             }
 
-            const response = await fetch(`/scrap-estudiante?url=${url}`, {
+            const response = await fetch(`${baseUrl}/scrap-estudiante?url=${url}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -303,7 +303,7 @@ const extraerDatosEstudiante = async (url) => {
             console.log('Role:', role.value)
 
             // Registrar entrada usando la nueva ruta
-            const entradaResponse = await axios.post('/qr/entrada', {
+            const entradaResponse = await axios.post(`${baseUrl}/qr/entrada`, {
                 user_id: userResponse.data.user.id,
                 tipo: 'entrada',
                 descripcion: 'Entrada vía QR - Usuario externo'

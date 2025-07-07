@@ -184,7 +184,7 @@ const flipped = ref(false)
 const estudianteData = ref(null)
 const cargandoDatos = ref(false)
 const role = ref('estudiante')
-
+const baseUrl = import.meta.env.VITE_WEBSITE_URL
 let codeReader = null
 let controlIntervalId = null
 let autoFlipIntervalId = null
@@ -226,7 +226,7 @@ const extraerDatosEstudiante = async (url) => {
                 return
             }
 
-            const response = await fetch(`/scrap-estudiante?url=${url}`, {
+            const response = await fetch(`${baseUrl}/scrap-estudiante?url=${url}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -286,7 +286,7 @@ const extraerDatosEstudiante = async (url) => {
             const token = urlParts[urlParts.length - 1]
 
             // Obtener datos del usuario usando la nueva ruta
-            const userResponse = await axios.get(`/qr/${token}`)
+            const userResponse = await axios.get(`${baseUrl}/qr/${token}`)
             console.log('Datos del usuario:', userResponse.data)
 
             if (!userResponse.data.success) {
