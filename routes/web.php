@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AsistenciaController;
+use App\Http\Controllers\ControlController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\GestionController;
@@ -76,6 +77,7 @@ Route::middleware([
     // Dashboard
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/control', [ControlController::class, 'index'])->name('control.index');
 
 
     // Hola Mundo

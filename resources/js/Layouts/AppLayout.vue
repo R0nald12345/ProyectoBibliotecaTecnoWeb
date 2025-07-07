@@ -90,6 +90,7 @@ function goToSidebarItem(item) {
 // Los ítems del sidebar (puedes adaptar esto si usas menuItems dinámico)
 const sidebarItems = ref([
     { nombre: 'Dashboard', ruta: route('dashboard') },
+    { nombre: 'Control', ruta: route('control.index') },
     { nombre: 'Mi QR', ruta: route('qr.mostrar') },
     { nombre: 'Gestiones', ruta: route('gestion.index') },
     { nombre: 'Usuarios', ruta: route('usuarios.index') },
@@ -117,6 +118,8 @@ const sidebarItems = ref([
                     </Link>
                     <span class="font-bold text-lg tracking-wide">Biblioteca</span>
                 </div>
+
+                
 
                 <!-- Theme Selector -->
                 <div class="mb-6 relative">
@@ -159,6 +162,15 @@ const sidebarItems = ref([
                         <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Dashboard
+                    </Link>
+
+                     <Link :href="route('control.index')"
+                        class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg transition"
+                        :class="{ 'nav-link-active': route().current('control') }">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 12l9-9 9 9M4 10v10h16V10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Control
                     </Link>
 
                     <Link :href="route('qr.mostrar')"
