@@ -265,14 +265,14 @@ const extraerDatosEstudiante = async (url) => {
                 .then(res => {
                     mensaje.value = res.data.message
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
-                    mensajePeticion= true
+                    mensajePeticion.value= true
                     // Mostrar alert de entrada exitosa
                     mostrarAlertaSalidaExitosa()
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
-                     mensajePeticion= false
+                     mensajePeticion.value= false
                 })
                 .finally(() => {
                     cargandoDatos.value = false
@@ -308,12 +308,14 @@ const extraerDatosEstudiante = async (url) => {
 
             if (entradaResponse.data.success) {
                 // Mostrar SweetAlert para usuario externo
-                mostrarAlertaSalidaExitosa()
+               mensajePeticion.value = true
 
                 mensaje.value = entradaResponse.data.mensaje
                 mensajeEstilo.value = 'bg-green-100 text-green-800'
             } else {
-                throw new Error('Error al registrar la salida')
+                 mensajePeticion.value = false
+                mensaje.value = entradaResponse.data.mensaje || 'Error al registrar salida. Consultar con el administrador'
+                mensajeEstilo.value = 'bg-red-100 text-red-800'
             }
         }
     } catch (error) {
