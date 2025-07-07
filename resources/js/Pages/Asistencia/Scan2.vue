@@ -297,7 +297,7 @@ const extraerDatosEstudiante = async (url) => {
             console.log('Role:', role.value)
 
             // Registrar entrada usando la nueva ruta
-            const entradaResponse = await axios.post('/qr/salida', {
+            const entradaResponse = await axios.post(`${baseUrl}/qr/salida`, {
                 user_id: userResponse.data.user.id,
                 tipo: 'salida',
                 descripcion: 'Salida vía QR - Usuario externo'

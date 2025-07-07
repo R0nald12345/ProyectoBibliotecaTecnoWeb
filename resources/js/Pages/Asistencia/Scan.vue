@@ -292,7 +292,7 @@ const extraerDatosEstudiante = async (url) => {
             const token = urlParts[urlParts.length - 1]
 
             // Obtener datos del usuario usando la nueva ruta
-            const userResponse = await axios.get(`/qr/${token}`)
+            const userResponse = await axios.get(`${baseUrl}/qr/${token}`)
             console.log('Datos del usuario:', userResponse.data)
 
             if (!userResponse.data.success) {
