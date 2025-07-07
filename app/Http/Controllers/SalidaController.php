@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Exports\EntradasExport;
 use App\Exports\SalidasExport;
 use App\Models\salida;
-use App\Models\TipoAlerta;
+
 use App\Models\User;
 use App\Models\Gestion;
+use App\Models\tipoalerta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
