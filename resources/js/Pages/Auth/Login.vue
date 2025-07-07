@@ -148,15 +148,7 @@ const submit = () => {
                 </div>
             </form>
 
-            <!-- Footer -->
-            <div class="mt-8 text-center">
-                <p class="text-sm text-slate-500">
-                    ¿No tienes una cuenta? 
-                    <Link :href="route('register')" class="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200">
-                        Regístrate aquí
-                    </Link>
-                </p>
-            </div>
+            
         </div>
     </div>
 </template>
