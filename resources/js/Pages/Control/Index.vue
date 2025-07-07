@@ -434,7 +434,3 @@ onMounted(() => {
         </div>
     </AppLayout>
 </template>
-
-<style scoped>
-/* Estilos adicionales si los necesitas */
-</style>
