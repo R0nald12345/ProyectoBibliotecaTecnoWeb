@@ -80,10 +80,18 @@ class EntradaController extends Controller
             ], 404);
         }
 
-        // // Asignar rol si no lo tiene
-        // if (!$user->hasRole('estudiante')) {
-        //     $user->assignRole('estudiante');
-        // }
+        // Buscar la gestión activa
+        $gestion = Gestion::select('id', 'nombre')
+            ->where('estado', 'activo')
+            ->first();
+
+        if (!$gestion) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No hay una gestión activa configurada.',
+            ], 400);
+        }
+
         $hoy = Carbon::today();
 
         Entrada::create([
@@ -91,7 +99,7 @@ class EntradaController extends Controller
             'fecha' => $hoy,
             'hora' => Carbon::now()->toTimeString(),
             'user_id' => $user->id,
-            'gestion_id' => 1,
+            'gestion_id' => $gestion->id,
             'tipoalerta_id' => $request->tipoalerta_id,
         ]);
 
@@ -100,8 +108,6 @@ class EntradaController extends Controller
             'message' => 'Asistencia Entrada registrada correctamente',
         ]);
     }
-
-
 
 
     /**

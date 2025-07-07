@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\entrada;
+use App\Models\Gestion;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -36,7 +37,7 @@ class EntradasExport implements FromCollection, WithHeadings
                 'Fecha' => $e->fecha,
                 'Hora' => $e->hora,
                 'Usuario' => $e->user->name ?? '—',
-                'Gestion' => $e->user->name ?? '—',
+                'Gestion' => $e->gestion->descripcion ?? '—',
                 'Tipo_alerta' => $e->tipoalerta->descripcion ?? '—',
             ];
         });
@@ -44,6 +45,6 @@ class EntradasExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['Id', 'Descripción', 'Fecha', 'Hora', 'Usuario', 'Tipo de Alerta'];
+        return ['Id', 'Descripción', 'Fecha', 'Hora', 'Usuario', 'Gestión', 'Tipo de Alerta'];
     }
 }

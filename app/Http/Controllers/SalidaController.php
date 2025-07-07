@@ -33,7 +33,7 @@ class SalidaController extends Controller
         ]);
     }
 
-   public function create()
+    public function create()
     {
         $usuarios = User::select('id', 'name')->get();
         $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
@@ -73,15 +73,26 @@ class SalidaController extends Controller
             $user->assignRole('estudiante');
         }
 
-        $hoy = Carbon::today();
+        // Buscar la gestión activa
+        $gestion = Gestion::select('id', 'nombre')
+            ->where('estado', 'activo')
+            ->first();
 
+        if (!$gestion) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No hay una gestión activa configurada.',
+            ], 400);
+        }
+
+        $hoy = Carbon::today();
 
         Salida::create([
             'descripcion' => 'Salida por código QR',
             'fecha' => $hoy,
             'hora' => Carbon::now()->toTimeString(),
             'user_id' => $user->id,
-            'gestion_id' => 1,
+            'gestion_id' => $gestion->id,
             'tipoalerta_id' => $request->tipoalerta_id,
         ]);
 
@@ -90,6 +101,7 @@ class SalidaController extends Controller
             'message' => 'Asistencia Salida registrada correctamente',
         ]);
     }
+
 
     public function edit(Salida $salida)
     {
