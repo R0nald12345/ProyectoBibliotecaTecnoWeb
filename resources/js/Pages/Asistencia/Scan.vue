@@ -211,7 +211,7 @@ const toggleFlip = () => {
 }
 
 function goBack() {
-    window.location.href = '/dashboard'
+    window.location.href = `${baseUrl}/dashboard`
 }
 
 // Función para extraer los datos del estudiante desde la URL
@@ -266,7 +266,7 @@ const extraerDatosEstudiante = async (url) => {
             axios.post(route('entrada.store'), entradaData)
                 .then(res => {
                     mensaje.value = res.data.message
-                    mensajePeticion = true 
+                  mensajePeticion= true
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
 
                     // Mostrar alert de entrada exitosa
@@ -311,12 +311,13 @@ const extraerDatosEstudiante = async (url) => {
 
             if (entradaResponse.data.success) {
                 // Mostrar SweetAlert para usuario externo
-                mostrarAlertaEntradaExitosa()
+                mensajePeticion = true 
 
                 mensaje.value = entradaResponse.data.mensaje
                 mensajeEstilo.value = 'bg-green-100 text-green-800'
             } else {
-                throw new Error('Error al registrar entrada')
+                mensaje.value = entradaResponse.data.mensaje || 'Error al registrar entrada Consultar con el administrador'
+                mensajePeticion= false
             }
         }
     } catch (error) {

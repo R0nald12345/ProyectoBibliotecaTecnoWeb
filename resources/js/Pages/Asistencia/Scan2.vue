@@ -188,7 +188,7 @@ const baseUrl = import.meta.env.VITE_WEBSITE_URL
 let codeReader = null
 let controlIntervalId = null
 let autoFlipIntervalId = null
-
+const mensajePeticion = ref(null)
 // ✅ Callbacks para el cooldown
 const onCooldownStart = (segundos) => {
     mensaje.value = `QR procesado. Espera ${segundos} segundos para escanear otro...`
@@ -196,9 +196,11 @@ const onCooldownStart = (segundos) => {
 }
 
 const onCooldownEnd = () => {
-    mensaje.value = 'ACEPTADO'
-    mostrarAlertaSalidaExitosa()
-    mensajeEstilo.value = 'bg-green-100 text-green-800'
+    if(mensajePeticion){
+        mensaje.value = 'ACEPTADO'
+        mostrarAlertaSalidaExitosa()
+        mensajeEstilo.value = 'bg-green-100 text-green-800'
+    }
 }
 
 // Función para alternar la animación flip de la tarjeta
@@ -207,7 +209,7 @@ const toggleFlip = () => {
 }
 
 function goBack() {
-    window.location.href = '/dashboard'
+    window.location.href = `${baseUrl}/dashboard`
 }
 
 // Función para extraer los datos del estudiante desde la URL
@@ -263,13 +265,14 @@ const extraerDatosEstudiante = async (url) => {
                 .then(res => {
                     mensaje.value = res.data.message
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
-
+                    mensajePeticion= true
                     // Mostrar alert de entrada exitosa
                     mostrarAlertaSalidaExitosa()
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
+                     mensajePeticion= false
                 })
                 .finally(() => {
                     cargandoDatos.value = false
