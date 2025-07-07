@@ -8,6 +8,7 @@ use App\Models\entrada;
 use App\Models\salida;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class QRController extends Controller
 {
@@ -32,13 +33,11 @@ class QRController extends Controller
 
         // Si es una petición AJAX, retornar JSON
 
-            return response()->json([
-                'success' => true,
-                'mensaje' => 'Datos obtenidos correctamente.',
-                'user' => $userData
-            ]);
-        
-
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Datos obtenidos correctamente.',
+            'user' => $userData
+        ]);
     }
 
     // Método separado para registrar entrada
@@ -85,7 +84,7 @@ class QRController extends Controller
             'fecha' => now()->toDateString(),
             'hora' => now()->toTimeString(),
             'user_id' => $request->user_id,
-            'tipoalerta_id' => 1, 
+            'tipoalerta_id' => 1,
             'gestion_id' => 1,
         ]);
 
@@ -100,7 +99,8 @@ class QRController extends Controller
     public function mostrarQR()
     {
         return Inertia::render('GenerarQR/GenerarQR', [
-            'user' => auth()->user(),
+            'user' => Auth::user(),
+
         ]);
     }
 }

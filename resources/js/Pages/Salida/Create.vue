@@ -22,9 +22,9 @@ const form = useForm({
 })
 
 function submit() {
-  form.post(route('salidas.store'), {
-    preserveScroll: true,
-  })
+    form.post(route('asistencia.storesalida'), {
+        preserveScroll: true,
+    })
 }
 </script>
 

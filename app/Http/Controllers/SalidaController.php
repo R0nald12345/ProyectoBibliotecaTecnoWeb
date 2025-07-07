@@ -33,11 +33,14 @@ class SalidaController extends Controller
         ]);
     }
 
-    public function create()
+   public function create()
     {
         $usuarios = User::select('id', 'name')->get();
         $tiposAlerta = TipoAlerta::select('id', 'descripcion')->get();
-        $gestiones = Gestion::select('id', 'nombre')->get();
+
+        $gestiones = Gestion::select('id', 'nombre')
+            ->where('estado', 'activo')
+            ->get();
 
         $fecha = now()->format('Y-m-d');
         $hora = now()->format('H:i');
