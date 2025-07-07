@@ -12,7 +12,7 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalidaController;
-use App\Http\Controllers\QrController;
+use App\Http\Controllers\QRController;
 // use App\Http\Controllers\RoleController; // Removed to avoid class name conflict
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
