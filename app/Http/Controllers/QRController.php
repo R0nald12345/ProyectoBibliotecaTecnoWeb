@@ -52,13 +52,22 @@ class QRController extends Controller
         $descripcion = $request->descripcion ?? ($request->tipo === 'entrada' ? 'Entrada vía QR' : 'Salida vía QR');
         $tipoAlertaId = $request->tipo === 'entrada' ? 1 : 2; // Asumiendo que 1 es entrada y 2 es salida
 
+        // Buscar la gestión activa
+        $gestion = \App\Models\Gestion::where('estado', 'activo')->first();
+        if (!$gestion) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No hay una gestión activa configurada.',
+            ], 400);
+        }
+
         entrada::create([
             'descripcion' => $descripcion,
             'fecha' => now()->toDateString(),
             'hora' => now()->toTimeString(),
             'user_id' => $request->user_id,
             'tipoalerta_id' => $tipoAlertaId,
-            'gestion_id' => 1,
+            'gestion_id' => $gestion->id,
         ]);
 
         return response()->json([
@@ -79,13 +88,22 @@ class QRController extends Controller
 
         $descripcion = $request->descripcion ?? 'Salida vía QR';
 
+        // Buscar la gestión activa
+        $gestion = \App\Models\Gestion::where('estado', 'activo')->first();
+        if (!$gestion) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'No hay una gestión activa configurada.',
+            ], 400);
+        }
+
         salida::create([
             'descripcion' => $descripcion,
             'fecha' => now()->toDateString(),
-            'hora' => now()->toTimeString(),
+            'hora' => now()->toTimeString(), 
             'user_id' => $request->user_id,
             'tipoalerta_id' => 1,
-            'gestion_id' => 1,
+            'gestion_id' => $gestion->id,
         ]);
 
         return response()->json([
