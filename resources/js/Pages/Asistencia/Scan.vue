@@ -197,7 +197,7 @@ const onCooldownStart = (segundos) => {
 }
 
 const onCooldownEnd = () => {
-    if (mensajePeticion) {
+    if (mensajePeticion.value) {
         mensaje.value = 'ACEPTADO'
         mostrarAlertaEntradaExitosa()
         mensajeEstilo.value = 'bg-green-100 text-green-800'
@@ -266,7 +266,7 @@ const extraerDatosEstudiante = async (url) => {
             axios.post(route('entrada.store'), entradaData)
                 .then(res => {
                     mensaje.value = res.data.message
-                    mensajePeticion = true 
+                    mensajePeticion.value = true 
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
 
                     // Mostrar alert de entrada exitosa
@@ -274,7 +274,7 @@ const extraerDatosEstudiante = async (url) => {
                 })
                 .catch(err => {
                     mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
-                    mensajePeticion= false
+                    mensajePeticion.value= false
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
                 .finally(() => {
@@ -317,13 +317,14 @@ const extraerDatosEstudiante = async (url) => {
                 mensajeEstilo.value = 'bg-green-100 text-green-800'
             } else {
                 mensaje.value = entradaResponse.data.mensaje || 'Error al registrar entrada Consultar con el administrador'
-                mensajePeticion= false
+                mensajePeticion.value= false
             }
         }
     } catch (error) {
         console.error('Error al extraer datos:', error)
-        mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`
+        mensaje.value = `Error: ${'QR NO RECONOCIDO COMUNIQUESE CON EL ADMINISTRADOR'}`
         mensajeEstilo.value = 'bg-red-100 text-red-800'
+        mensajePeticion.value= false
     } finally {
         cargandoDatos.value = false
     }

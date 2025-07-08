@@ -320,8 +320,9 @@ const extraerDatosEstudiante = async (url) => {
         }
     } catch (error) {
         console.error('Error al extraer datos:', error)
-        mensaje.value = `Error: ${error.message || 'No se pudieron extraer los datos'}`
+        mensaje.value = `Error: ${'QR NO RECONOCIDO COMUNIQUESE CON EL ADMINISTRADOR'}`
         mensajeEstilo.value = 'bg-red-100 text-red-800'
+        mensajePeticion.value= false
     } finally {
         cargandoDatos.value = false
     }
