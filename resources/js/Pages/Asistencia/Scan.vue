@@ -128,20 +128,6 @@
 
                 </div>
             </div>
-            <!-- Tarjeta de usuario externo con flip -->
-            <div v-else-if="role === 'externo'" class="rounded-2xl shadow-xl p-6"
-                style="background-color: var(--bg-card); color: var(--text-color)">
-                <h3 class="text-xl font-bold mb-6 text-center" style="color: var(--text-color)">
-                    Carnet de Usuario
-                </h3>
-
-                <div class="relative w-96 h-64 transition-all duration-700 ease-in-out cursor-pointer" :style="{
-                    transformStyle: 'preserve-3d',
-                    transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
-                }" @click="toggleFlip">
-                    <TarjetaExterno :estudianteData="estudianteData" :flipped="flipped" @toggleFlip="toggleFlip" />
-                </div>
-            </div>
         </div>
 
         <ModalCargando v-if="cargandoDatos" />
@@ -155,7 +141,6 @@ import { BrowserQRCodeReader } from '@zxing/browser'
 import axios from 'axios'
 import ModalCargando from '@/Components/ModalCargando.vue'
 import TarjetaEstudiante from '@/Components/TarjetaEstudiante.vue'
-import TarjetaExterno from '@/Components/TarjetaExterno.vue'
 import { useSound } from '@/composables/useSound'
 import { useCooldown } from '@/composables/useCooldown'
 const baseUrl = import.meta.env.VITE_WEBSITE_URL
