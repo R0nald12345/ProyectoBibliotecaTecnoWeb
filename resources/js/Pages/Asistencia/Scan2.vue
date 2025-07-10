@@ -236,18 +236,16 @@ const extraerDatosEstudiante = async (url) => {
 
             console.log(data)
 
-            // Registrar entrada automáticamente
-            const entradaData = {
-                descripcion: 'Estudiante aceptado',
-                fecha: new Date().toISOString().split('T')[0],
-                hora: new Date().toTimeString().split(' ')[0],
+            // Registrar salida automáticamente usando QRController
+            const salidaData = {
                 user_id: parseInt(data.REGISTRO),
-                tipoalerta_id: 1,
+                tipo: 'salida',
+                descripcion: 'Salida vía QR - Estudiante',
             }
 
-            axios.post(route('salida.store'), entradaData)
+            axios.post(`${baseUrl}/qr/salida`, salidaData)
                 .then(res => {
-                    mensaje.value = res.data.message
+                    mensaje.value = res.data.mensaje
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
                     mensajePeticion.value= true
                     mostrarAlertaSalidaExitosa()
@@ -447,6 +445,8 @@ onMounted(async () => {
         }
 
         await iniciarEscaner()
+    
+         //await extraerDatosEstudiante('https://www.uagrm.edu.bo/validar/1ef16b9e782dce23e7c4eba69bb8da5a84edfa85814cd78f9b6433183be1f558')
     } catch (error) {
         console.error('Error al enumerar dispositivos:', error)
         mensaje.value = `Error: ${error.message || 'No se pudo enumerar las cámaras'}`

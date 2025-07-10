@@ -246,16 +246,28 @@ const extraerDatosEstudiante = async (url) => {
                 hora: new Date().toTimeString().split(' ')[0],
                 user_id: parseInt(data.REGISTRO),
                 tipoalerta_id: 1,
+                estado: true
             }
 
-            axios.post(route('entrada.store'), entradaData)
+            axios.post(`${baseUrl}/qr/entrada`, {
+                user_id: parseInt(data.REGISTRO),
+                tipo: 'entrada',
+                descripcion: 'Estudiante aceptado',
+                estado: true
+            })
                 .then(res => {
                     mensaje.value = res.data.message
                     mensajePeticion.value = true 
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
                 })
                 .catch(err => {
-                    mensaje.value = err.response?.data?.mensaje || err.response?.data?.message || 'Error al registrar entrada'
+                    // Validar si el error es por entrada activa
+
+                    if (err.response?.data?.mensaje && err.response.data.mensaje.includes('Ya existe una entrada activa')) {
+                        mensaje.value = 'No puedes registrar dos entradas seguidas. Debes marcar salida antes de una nueva entrada.'
+                    } else {
+                        mensaje.value = err.response?.data?.mensaje || err.response?.data?.message || 'Error al registrar entrada'
+                    }
                     mensajePeticion.value= false
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
@@ -454,6 +466,7 @@ onMounted(async () => {
         }
 
         await iniciarEscaner()
+        //await extraerDatosEstudiante('https://www.uagrm.edu.bo/validar/1ef16b9e782dce23e7c4eba69bb8da5a84edfa85814cd78f9b6433183be1f558')
     } catch (error) {
         console.error('Error al enumerar dispositivos:', error)
         mensaje.value = `Error: ${error.message || 'No se pudo enumerar las cámaras'}`
