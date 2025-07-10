@@ -50,14 +50,25 @@ class QRController extends Controller
         ]);
 
         $descripcion = $request->descripcion ?? ($request->tipo === 'entrada' ? 'Entrada vía QR' : 'Salida vía QR');
-        $tipoAlertaId = $request->tipo === 'entrada' ? 1 : 2; // Asumiendo que 1 es entrada y 2 es salida
+        $tipoAlertaId = $request->tipo === 'entrada' ? 1 : 2;
 
-        // Buscar la gestión activa
         $gestion = \App\Models\Gestion::where('estado', 'activo')->first();
         if (!$gestion) {
             return response()->json([
                 'success' => false,
                 'mensaje' => 'No hay una gestión activa configurada.',
+            ], 400);
+        }
+
+        // Validar si ya existe una entrada activa (estado=true) para este usuario y gestión
+        $entradaActiva = entrada::where('user_id', $request->user_id)
+            ->where('gestion_id', $gestion->id)
+            ->where('estado', true)
+            ->first();
+        if ($entradaActiva) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Ya existe una entrada activa para este usuario. Debe registrar una salida antes de una nueva entrada.',
             ], 400);
         }
 
@@ -68,6 +79,7 @@ class QRController extends Controller
             'user_id' => $request->user_id,
             'tipoalerta_id' => $tipoAlertaId,
             'gestion_id' => $gestion->id,
+            'estado' => true,
         ]);
 
         return response()->json([
@@ -88,7 +100,6 @@ class QRController extends Controller
 
         $descripcion = $request->descripcion ?? 'Salida vía QR';
 
-        // Buscar la gestión activa
         $gestion = \App\Models\Gestion::where('estado', 'activo')->first();
         if (!$gestion) {
             return response()->json([
@@ -97,13 +108,37 @@ class QRController extends Controller
             ], 400);
         }
 
+        // Buscar la última entrada activa (estado=true) para este usuario y gestión
+        $entradaActiva = entrada::where('user_id', $request->user_id)
+            ->where('gestion_id', $gestion->id)
+            ->where('estado', true)
+            ->latest('fecha')
+            ->first();
+        if ($entradaActiva) {
+            $entradaActiva->estado = false;
+            $entradaActiva->save();
+        }
+
+        // Validar si ya existe una salida activa (estado=true) para este usuario y gestión
+        $salidaActiva = salida::where('user_id', $request->user_id)
+            ->where('gestion_id', $gestion->id)
+            ->where('estado', true)
+            ->first();
+        if ($salidaActiva) {
+            return response()->json([
+                'success' => false,
+                'mensaje' => 'Ya existe una salida activa para este usuario. Debe registrar una nueva entrada antes de otra salida.',
+            ], 400);
+        }
+
         salida::create([
             'descripcion' => $descripcion,
             'fecha' => now()->toDateString(),
-            'hora' => now()->toTimeString(), 
+            'hora' => now()->toTimeString(),
             'user_id' => $request->user_id,
             'tipoalerta_id' => 1,
             'gestion_id' => $gestion->id,
+            'estado' => true,
         ]);
 
         return response()->json([

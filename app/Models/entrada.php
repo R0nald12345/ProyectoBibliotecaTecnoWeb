@@ -16,6 +16,7 @@ class entrada extends Model
         'user_id',
         'tipoalerta_id',
         'gestion_id',
+        'estado',
     ];
 
     public function user()

@@ -253,12 +253,9 @@ const extraerDatosEstudiante = async (url) => {
                     mensaje.value = res.data.message
                     mensajePeticion.value = true 
                     mensajeEstilo.value = 'bg-green-100 text-green-800'
-
-                    // Mostrar alert de entrada exitosa
-                    // mostrarAlertaEntradaExitosa()
                 })
                 .catch(err => {
-                    mensaje.value = err.response?.data?.message || 'Error al registrar entrada'
+                    mensaje.value = err.response?.data?.mensaje || err.response?.data?.message || 'Error al registrar entrada'
                     mensajePeticion.value= false
                     mensajeEstilo.value = 'bg-red-100 text-red-800'
                 })
@@ -307,7 +304,7 @@ const extraerDatosEstudiante = async (url) => {
         }
     } catch (error) {
         console.error('Error al extraer datos:', error)
-        mensaje.value = `Error: ${'QR NO RECONOCIDO COMUNIQUESE CON EL ADMINISTRADOR'}`
+        mensaje.value = `Error: ${'QR NO REGISTRADO O SU ASISTENCIA YA FUE MARCADA'}`
         mensajeEstilo.value = 'bg-red-100 text-red-800'
         mensajePeticion.value= false
     } finally {
