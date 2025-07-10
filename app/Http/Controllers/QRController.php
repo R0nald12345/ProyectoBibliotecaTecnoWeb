@@ -108,28 +108,19 @@ class QRController extends Controller
             ], 400);
         }
 
+        
         // Buscar la última entrada activa (estado=true) para este usuario y gestión
         $entradaActiva = entrada::where('user_id', $request->user_id)
-            ->where('gestion_id', $gestion->id)
-            ->where('estado', true)
-            ->latest('fecha')
-            ->first();
-        if ($entradaActiva) {
-            $entradaActiva->estado = false;
-            $entradaActiva->save();
-        }
+        ->where('gestion_id', $gestion->id)
+        ->where('estado', true)
+        ->latest('fecha')
+        ->first();
+        $entradaActiva->estado = false;
+        $entradaActiva->save();
 
-        // Validar si ya existe una salida activa (estado=true) para este usuario y gestión
-        $salidaActiva = salida::where('user_id', $request->user_id)
-            ->where('gestion_id', $gestion->id)
-            ->where('estado', true)
-            ->first();
-        if ($salidaActiva) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'Ya existe una salida activa para este usuario. Debe registrar una nueva entrada antes de otra salida.',
-            ], 400);
-        }
+        dump('Entrada', $entradaActiva);
+    
+
 
         salida::create([
             'descripcion' => $descripcion,

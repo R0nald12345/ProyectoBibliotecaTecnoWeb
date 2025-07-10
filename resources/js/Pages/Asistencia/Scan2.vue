@@ -288,17 +288,12 @@ const extraerDatosEstudiante = async (url) => {
                 tipo: 'salida',
                 descripcion: 'Salida vía QR - Usuario externo'
             })
+            console.log('xxxxxxxxxxxxxxxxxx', entradaResponse.data.success)
 
-            if (entradaResponse.data.success) {
                 // Mostrar SweetAlert para usuario externo
-               mensajePeticion.value = true
-                mensaje.value = entradaResponse.data.mensaje
-                mensajeEstilo.value = 'bg-green-100 text-green-800'
-            } else {
-                 mensajePeticion.value = false
-                mensaje.value = entradaResponse.data.mensaje || 'Error al registrar salida. Consultar con el administrador'
-                mensajeEstilo.value = 'bg-red-100 text-red-800'
-            }
+            mensajePeticion.value = true
+            mensaje.value = entradaResponse.data.mensaje
+            mensajeEstilo.value = 'bg-green-100 text-green-800'
         }
     } catch (error) {
         console.error('Error al extraer datos:', error)
