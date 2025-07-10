@@ -14,11 +14,12 @@ const flash = usePage().props.flash
 const message = computed(() => flash.success || flash.message)
 
 function deleteRole(id) {
-    router.delete(`/roles/${id}`, {
+    router.delete(route('roles.destroy', id), {
         preserveScroll: true,
         preserveState: false,
-    })
+    });
 }
+
 </script>
 
 <template>
